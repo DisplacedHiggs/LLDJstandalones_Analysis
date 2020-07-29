@@ -20,19 +20,16 @@ std::vector<int> analyzer_createobjects::muon_passID( Float_t muPtCut1, Float_t 
 
  for(int i = 0; i < AOD_muPt->size(); i++)
  {
-
   Float_t muonPt = getMuonPt(i,sysbinname);
   bool pass_kin = false;
   if( i==0 ) pass_kin = (muonPt > muPtCut1) && ( fabs(AOD_muEta->at(i)) < muEtaCut ) ;
   else       pass_kin = (muonPt > muPtCut2) && ( fabs(AOD_muEta->at(i)) < muEtaCut ) ;
 
-  bool pass_bit = AOD_muPassLooseID->at(i);
-
-  if (muoid == "Loose")  muoisoval = 0.25 ;
-  if (muoid == "Medium") muoisoval = 0.25 ;
-  if (muoid == "Tight")  muoisoval = 0.15 ;
+  bool pass_bit = false;
+  if (muoid == "Loose")  { muoisoval = 0.25 ; pass_bit = AOD_muPassLooseID->at(i);}
+  if (muoid == "Medium") { muoisoval = 0.25 ; pass_bit = AOD_muPassMediumGHID->at(i);}
+  if (muoid == "Tight")  { muoisoval = 0.15 ; pass_bit = AOD_muPassTightID->at(i);}
   bool pass_iso = AOD_muPFdBetaIsolation->at(i) < muoisoval ;
-  std::cout<<"muoisoval:   "<<muoisoval<<std::endl;
   if( pass_bit && pass_kin && pass_iso )
   {
    nSelectedMuo++;
