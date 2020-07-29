@@ -14,8 +14,8 @@ analyzer_createobjects::~analyzer_createobjects()
 //----------------------------analyzer_createobjects
 
 //-------------------------muon_passID
-std::vector<int> analyzer_createobjects::muon_passID( int bitnr, Float_t muPtCut1, Float_t muPtCut2, Float_t muEtaCut, TString sysbinname)
-{//------ btnr depricated can we remove?
+std::vector<int> analyzer_createobjects::muon_passID( Float_t muPtCut1, Float_t muPtCut2, Float_t muEtaCut, TString sysbinname)
+{
  std::vector<int> mulist;
 
  for(int i = 0; i < AOD_muPt->size(); i++)
@@ -26,13 +26,13 @@ std::vector<int> analyzer_createobjects::muon_passID( int bitnr, Float_t muPtCut
   if( i==0 ) pass_kin = (muonPt > muPtCut1) && ( fabs(AOD_muEta->at(i)) < muEtaCut ) ;
   else       pass_kin = (muonPt > muPtCut2) && ( fabs(AOD_muEta->at(i)) < muEtaCut ) ;
 
-  bool pass_bit = AOD_muPassLooseID->at(i);//------should probably make if/else groups for other ID's
+  bool pass_bit = AOD_muPassLooseID->at(i);
 
-  if (muoid = "Loose")  muoisoval = 0.25 ;
-  if (muoid = "Medium") muoisoval = 0.25 ;
-  if (muoid = "Tight")  muoisoval = 0.15 ;
+  if (muoid == "Loose")  muoisoval = 0.25 ;
+  if (muoid == "Medium") muoisoval = 0.25 ;
+  if (muoid == "Tight")  muoisoval = 0.15 ;
   bool pass_iso = AOD_muPFdBetaIsolation->at(i) < muoisoval ;
-
+  std::cout<<"muoisoval:   "<<muoisoval<<std::endl;
   if( pass_bit && pass_kin && pass_iso )
   {
    nSelectedMuo++;
@@ -65,20 +65,6 @@ std::vector<int> analyzer_createobjects::electron_passID( int bitnr, Float_t ele
   bool pass_bit = AOD_eleIDbit->at(i) >> bitnr & 0x1 == 1;
 
   bool pass_overlap = true;
-/*
-  if(photon_list.size()>0){
-   for(int d=0; d<photon_list.size(); ++d){
-    int phoindex = photon_list[d];
-    if(phoindex<= (AOD_phoEta->size()-1) && phoindex<= (AOD_phoPhi->size()-1)){
-     if( dR( AOD_phoEta->at(phoindex),AOD_phoPhi->at(phoindex), AOD_eleEta->at(i),AOD_elePhi->at(i) ) < objcleandRcut )  pass_overlap=false;
-    }
-   }//end photons
-  } // if photons
-*/
-  //// isolation already in VID
-  //bool pass_iso = AOD_elePFdBetaIsolationRhoEA ->at(i) <  [SELBINNAMESIZE][LEPBINNAMESIZE];
-  //bool pass_iso = AOD_elePFdBetaIsolationCHS   ->at(i) <  [SELBINNAMESIZE][LEPBINNAMESIZE];
-  //bool pass_iso = AOD_elePFdBetaIsolationDiff  ->at(i) <  [SELBINNAMESIZE][LEPBINNAMESIZE];
 
   bool pass_crack = (fabs(AOD_eleEta->at(i))<1.442) ||  (fabs(AOD_eleEta->at(i))>1.566);
 
@@ -90,28 +76,9 @@ std::vector<int> analyzer_createobjects::electron_passID( int bitnr, Float_t ele
   } // if pass_bit && pass_kin
  } // loop over electrons
 
- //if(elelist.size()>1)std::cout<<"*********************************************************************************" <<std::endl;
- //if(elelist.size()>1){for(int ii=0; ii<elelist.size(); ii++){std::cout<<"Before sort: index: "<<ii<<", Pt: "<<getElectronPt(elelist[ii], sysbinname)<<"  Eta: "<<AOD_eleEta->at(elelist[ii])<<std::endl;}}
- //if(elelist.size()>1)std::cout<<"*********************************************************************************"<<std::endl;
-
   std::sort(elelist.begin(),elelist.end(),
            [&]( int a, int b ) { return AOD_elePt->at(a) > AOD_elePt->at(b); });
 
-  /* for (int ii = (elelist.size() - 1); ii >= 0; ii--)
-   {
-     for (int jj = 1; jj <=ii; jj++)
-     {
-       if( getElectronPt(elelist[jj-1], sysbinname) < getElectronPt(elelist[jj],sysbinname) )
-       {
-        int temp = elelist[jj-1];
-        elelist[jj-1] = elelist[jj];
-        elelist[jj] = temp;
-    } } }
-  */
-
-   //if(elelist.size()>1)std::cout<<"*********************************************************************************" <<std::endl;
-   //if(elelist.size()>1){for(int ii=0; ii<elelist.size(); ii++){std::cout<<"After sort: index: "<<ii<<", Pt:  "<<getElectronPt(elelist[ii], sysbinname)<<"  Eta: "<<AOD_eleEta->at(elelist[ii])<<std::endl;}}
-   //if(elelist.size()>1)std::cout<<"*********************************************************************************"<<std::endl;
  return elelist;
 }
 
@@ -432,83 +399,6 @@ std::vector<float> analyzer_createobjects::jet_minDR( ) {
   return minDR_list;
 }
 
-
-////-------------------------jet_matchCSV
-//std::vector<float> analyzer_createobjects::jet_matchCSV(){
-//
-//  const float drcut = 0.4;
-//  std::vector<float> csv;
-//
-//  for(int i=0; i<AODnCaloJet; ++i){//all calo jets
-//
-//    float mycsv = -10;
-//    float bestdr = 0.4;
-////    for(int j = 0; j < AODnPATJet; j++){//all PAT jets
-////
-////      float mydr = dR( AODCaloJetEta->at(i), AODCaloJetPhi->at(i), AODPATJetEta->at(j), AODPATJetPhi->at(j) );
-////      if( (mydr < drcut) && (mydr < bestdr) ){
-////	mycsv = AODPATJetCSV->at(j);
-////	bestdr = mydr;
-////      }
-////
-////    }//all PAT jets
-//    csv.push_back(mycsv);
-//
-//  }//good calo jets
-//
-//  return csv;
-//
-//}
-
-
-////-------------------------jet_matchPartonFlavour
-//std::vector<int> analyzer_createobjects::jet_matchPartonFlavour(){
-//
-//  const float drcut = 0.4;
-//  std::vector<int> partonFlavour;
-//
-//  for(int i=0; i<AODnCaloJet; ++i){//all calo jets
-//
-//    float mypartonFlavour = 0;
-//    float bestdr = 0.4;
-//    for(int j = 0; j < AODnPATJet; j++){//all PAT jets
-//
-//      float mydr = dR( AODCaloJetEta->at(i), AODCaloJetPhi->at(i), AODPATJetEta->at(j), AODPATJetPhi->at(j) );
-//      if( (mydr < drcut) && (mydr < bestdr) ){
-//	mypartonFlavour = AODPATJetPartonFlavour->at(j);
-//	bestdr = mydr;
-//      }
-//
-//    }//all PAT jets
-//    partonFlavour.push_back(mypartonFlavour);
-//
-//  }//good calo jets
-//
-//  return partonFlavour;
-//
-//}
-
-////-------------------------coutNBPartonFlavour
-//int analyzer_createobjects::coutNBPartonFlavour(){
-//
-//  int n_b =0;
-//  if(isMC){
-//
-//    for(int j = 0; j < AODnPATJet; j++){//all PAT jets
-//      //Really loose cuts
-//      if( fabs(AODPATJetEta->at(j))<3.0 &&  AODPATJetPt->at(j)>15.0 && abs(AODPATJetPartonFlavour->at(j))==5 ) n_b++;
-//    }//j
-//
-//  }//isMC
-//
-//  return n_b;
-//
-//}
-
-
-
-
-
 //-------------------------jet_passID
 std::vector<int> analyzer_createobjects::jet_passID( int bitnr, TString jettype, Float_t jetPtCut, Float_t jetEtaCut, TString sysbinname ) {
 
@@ -698,15 +588,6 @@ Float_t analyzer_createobjects::getPhotonPt(int idnr, TString sysbinname){
     return AOD_phoPt;
   }
 }
-
-
-////-------------------------getMET
-//Float_t analyzer_createobjects::getMET(){
-// themet   = AOD_pfMET_pt; //AOD_pfChMET_pt;
-// themephi = AOD_pfMET_phi; // AOD_pfChMET_phi;
-//}
-
-
 
 //-------------------------calculateHT
 void analyzer_createobjects::calculateHT(){

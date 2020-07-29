@@ -88,7 +88,7 @@ void analyzer_loop::Loop(TString outfilename,
   // idbit, pt, eta, sysbinname
   electron_list    = electron_passID  ( eleidbit,        ele_minPt1, ele_minPt2, ele_maxEta, "");
   photon_list      = photon_passID    ( pho_minPt, pho_maxEta, ""); 
-  muon_list        = muon_passID      ( muoidbit,        mu_minPt1,  mu_minPt2,  mu_maxEta,  ""); 
+  muon_list        = muon_passID      ( mu_minPt1,  mu_minPt2,  mu_maxEta,  ""); 
   aodcalojet_list  = jet_passID       ( aodcalojetidbit, "calo",  jet_minPt, jet_maxEta, "" ); 
 //  aodpfjet_list    = jet_passID       ( aodcalojetidbit, "pf",    jet_minPt, jet_maxEta, ""); 
 //  aodpfchsjet_list = jet_passID       ( aodcalojetidbit, "pfchs", jet_minPt, jet_maxEta, ""); 
@@ -423,13 +423,6 @@ void analyzer_loop::Loop(TString outfilename,
   }
 
   //debug_printobjects();   // helpful printout (turn off when submitting!!!)
-
-  //Print objects in backgroundMC with >=2 tags
-  //if(taggedjet_list.size()>=2 && isMC && !outfilename.Contains("HToSS")) debug_printobjects();
-
-
-  //printf("make log: %0.i\n",makelog);
-  
  } // end loop over entries
 
  std::cout << std::endl;
@@ -461,14 +454,7 @@ void analyzer_loop::Loop(TString outfilename,
  std::cout<<" n_passOnePho       " << setw(width) << left << n_passOnePho       << setw(width) << left << (float) n_passOnePho      / (float) n_tot << std::endl;   
  std::cout<<std::endl;
 
- std::cout<<" Jet Matching "<<std::endl;
-// std::cout<<"  n_totalPF          "<< n_totalPF          <<std::endl;
-// std::cout<<"  n_totalPFchs       "<< n_totalPFchs       <<std::endl;
  std::cout<<"  n_totalCalo        "<< n_totalCalo        <<std::endl;
-// std::cout<<"  n_matchedPFCalo    "<< n_matchedPFCalo    <<std::endl;
-// std::cout<<"  n_matchedPFchsCalo "<< n_matchedPFchsCalo <<std::endl;
-// std::cout<<"   Percent calo matched to PF: "<<(float)n_matchedPFCalo/(float)n_totalCalo<<std::endl;
-// std::cout<<"   Percent calo matched to PFchs: "<<(float)n_matchedPFchsCalo/(float)n_totalCalo<<std::endl;
  std::cout<<std::endl<<std::endl;
 
  TFile *outfile_GEW = 0;

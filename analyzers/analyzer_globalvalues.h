@@ -87,7 +87,6 @@ public :
 
    int phoidbit;
    int eleidbit;
-   int muoidbit;
    int aodcalojetidbit;
    float muoisoval;
 
