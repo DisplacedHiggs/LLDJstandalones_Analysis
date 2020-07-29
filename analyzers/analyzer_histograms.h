@@ -237,9 +237,6 @@ public :
 // TH1F*  h_TTOCTrigger23ElePt       [SELBINNAMESIZE];
 // TH1F*  h_TTOCTrigger27EleEta      [SELBINNAMESIZE];
 // TH1F*  h_TTOCTrigger27ElePt       [SELBINNAMESIZE];
-// //Single Photon
-// TH1F*  h_TTOCTriggerPhoEta        [SELBINNAMESIZE];
-// TH1F*  h_TTOCTriggerPhoPt         [SELBINNAMESIZE];
  //--EMu
  TH1F*  h_TTOC_Ele23Mu12_EMu_ElePt     [SELBINNAMESIZE];
  TH1F*  h_TTOC_Ele23Mu12_EMu_MuPt      [SELBINNAMESIZE];
@@ -462,19 +459,6 @@ public :
  TH2F* h_IpVjetPt                  [SELBINNAMESIZE][JETMULTNAMESIZE];
  TH2F* h_AlphaVjetPt               [SELBINNAMESIZE][JETMULTNAMESIZE];
  
-
- // Background Estimate
- int getMistagRateBin(int j, TString mistag_name);
- float getMistagRateByBin(int j, TString mistag_name);
- float getMistagRate(int j, TString mistag_name);
- float computeTerm(int b, std::vector<int> mistagBins_tagged, std::vector<int> mistagBins_untagged, TString mistag_name);
- void comb(int n, int r, int *arr, int sz, Float_t weight, TString mistag_name);
- TH1F* h_bkgest_pt = NULL;
- TH1F* h_bkgest_pteta = NULL;
- Bool_t initBackgroundEstimateHistograms();
- Bool_t fillBackgroundEstimateHistograms(Float_t weight);
- Bool_t writeBackgroundEstimateHistograms(TFile* outfile);
-
 
 };
 

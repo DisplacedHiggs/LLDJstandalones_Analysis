@@ -45,10 +45,6 @@ Float_t analyzer_scalefactors::makePUWeight( TString dataset ){
   tmpbin    = PUWeights_MuonEG->GetBin(AODnTruePU);
   tmpweight = PUWeights_MuonEG->GetBinContent(tmpbin);
  }
- else if( dataset.EqualTo("SinglePhoton") ){
-  tmpbin    = PUWeights_SinglePhoton->GetBin(AODnTruePU);
-  tmpweight = PUWeights_SinglePhoton->GetBinContent(tmpbin);
- }
  //printf("making PU weight for %i , %i, %f \n", AODnTruePU,tmpbin,tmpweight);
  return tmpweight;
 }
@@ -166,16 +162,13 @@ void analyzer_scalefactors::loadPUWeight(){
  TString filename_DoubleEG     = "2018_puWeights_EGamma_69200.root" ;
  TString filename_DoubleMu     = "2018_puWeights_DoubleMuon_69200.root" ;
  TString filename_MuonEG       = "2018_puWeights_MuonEG_69200.root" ;
- TString filename_SinglePhoton = "puWeights_SinglePhoton_69200.root" ;
  TFile* file_puweights_DoubleEG     = new TFile( filename_DoubleEG     ) ;
  TFile* file_puweights_DoubleMu     = new TFile( filename_DoubleMu     ) ;
  TFile* file_puweights_MuonEG       = new TFile( filename_MuonEG       ) ;
- TFile* file_puweights_SinglePhoton = new TFile( filename_SinglePhoton ) ;
  //std::cout <<" filename: " << filename << std::endl;
  PUWeights_DoubleEG     = (TH1F*)file_puweights_DoubleEG    ->Get("h_PUweight")->Clone("PUWeights_DoubleEG"    );
  PUWeights_DoubleMu     = (TH1F*)file_puweights_DoubleMu    ->Get("h_PUweight")->Clone("PUWeights_DoubleMu"    );
  PUWeights_MuonEG       = (TH1F*)file_puweights_MuonEG      ->Get("h_PUweight")->Clone("PUWeights_MuonEG"      );
- PUWeights_SinglePhoton = (TH1F*)file_puweights_SinglePhoton->Get("h_PUweight")->Clone("PUWeights_SinglePhoton");
  return ;
 }
 
@@ -213,43 +206,4 @@ void analyzer_scalefactors::loadMuonIso(TString muoid){
  MuonIso = (TH2F*)file_muoniso->Get(histname)->Clone("MuonIso");
  return ;
 }
-//----------------------------loadMistagRate
-void analyzer_scalefactors::loadMistagRate(){
-
-  TFile* fMistagRate = TFile::Open("feff_ZH.root", "READ");
-
-  h_MistagRate_pt = (TH1F*)fMistagRate->Get("h_eff_mu_ZH_AllJets_AODCaloJetPtVar");
-  //Systematics
-  for(int i=0; i<6; i++){
-    TString num = ""; num+= i;
-    TString name = h_MistagRate_pt->GetName(); name+= "_sys_"; name += num;
-    TH1F* temp = (TH1F*)h_MistagRate_pt->Clone();
-    temp->SetName( name );
-    temp->Reset();
-    h_MistagRate_pt_sys.push_back( temp );
-  }
-
-  h_MistagRate_pteta = (TH2F*)fMistagRate->Get("h_eff_mu_ZH_AllJets_AODCaloJetPtVarAbsEtaVar");
-  //Systematics
-  for(int i=0; i<6; i++){
-    TString num = ""; num+= i;
-    TString name = h_MistagRate_pteta->GetName(); name+= "_sys_"; name += num;
-
-    //TH2F* temp = (TH2F*)h_MistagRate_pteta->Clone();
-    //temp->SetName( name );
-    //temp->Reset();
-
-    //For some reason the normal way leads to bizarre seg faults.  
-    //Recreate from scratch:
-    const int Pt_n_xbins = 10;
-    float Pt_xbins[Pt_n_xbins+1] = {0, 10, 20, 30, 40, 50, 75, 100, 150, 250, 500};
-    const int AbsEta_n_bins = 2;
-    float AbsEta_bins[AbsEta_n_bins+1] = {0, 1.5, 2.4};
-    TH2F* temp = new TH2F(name, name, Pt_n_xbins, Pt_xbins, AbsEta_n_bins, AbsEta_bins);
-
-    h_MistagRate_pteta_sys.push_back( temp );
-  }
-  return;
-}
-
 

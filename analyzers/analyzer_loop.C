@@ -43,13 +43,6 @@ void analyzer_loop::Loop(TString outfilename,
 
  std::cout<<"uncbin: "<<uncbin<<std::endl;
 
-TFile *outfile_bkgest = 0;
- bool doBkgEst = true;
- if( doBkgEst && uncbin.EqualTo("") ){
-   std::cout<<"doBkgEst"<<std::endl;
-   outfile_bkgest = TFile::Open(outfilename+"_BkgEst.root","RECREATE");
-   loadMistagRate();
- }
  TH1F* h_sum_AODGenEventWeight = new TH1F("h_sum_AODGenEventWeight","h_sum_AODGenEventWeight", 5,0.,5.);
 // TFile *outfile_nPU = 0;
 // outfile_nPU = TFile::Open(outfilename+"_AOD0thnPU.root","RECREATE");
@@ -139,20 +132,9 @@ TFile *outfile_bkgest = 0;
   if(!pass_L1PF){aodcalojet_L1PF_list.clear(); L1PFremoved = kTRUE;}
   taggedjet_list_L1PF = jet_passTagger_L1PF ();
 
-  // make calomatchedPF_list PFmatchedCalo_list calomatchedPFchs_list PFchsmatchedCalo_list 
-//  matchPFCalojets( "PF" );
-//  matchPFCalojets( "PFchs" );
-//  n_totalPF          += aodpfjet_list.size()         ; 
-//  n_totalPFchs       += aodpfchsjet_list.size()      ; 
   n_totalCalo        += aodcalojet_list.size()        ; 
-//  n_matchedPFCalo    += calomatchedPF_list.size()    ; 
-//  n_matchedPFchsCalo += calomatchedPFchs_list.size() ; 
 
   aodcalojet_minDR_list = jet_minDR();
-//  aodcalojet_matchedCSV_list = jet_matchCSV();
-//  aodcalojet_matchedPartonFlavour_list = jet_matchPartonFlavour();
-
-//  nBPartonFlavour = coutNBPartonFlavour();
 
   // colisions happen @LHC at a given rate, use event_weight
   // to make the simulation match the rate seen in data
@@ -163,7 +145,6 @@ TFile *outfile_bkgest = 0;
   if(isMC) PUweight_DoubleEG     = makePUWeight("DoubleEG"    ) ;
   if(isMC) PUweight_DoubleMu     = makePUWeight("DoubleMu"    ) ;
   if(isMC) PUweight_MuonEG       = makePUWeight("MuonEG"      ) ;
-//  if(isMC) PUweight_SinglePhoton = makePUWeight("SinglePhoton") ;
   // electrons also have an associated scale factor for MC 
 //  if(isMC) event_weight *= makeTTWeight( avgTTSF );
 
@@ -335,12 +316,6 @@ TFile *outfile_bkgest = 0;
 
   if ( (( bitsPassTwoMuOffZ      >> 0) &1) ){PU_weight = PUweight_DoubleMu; } 
   if ( (( bitsPassTwoEleOffZ     >> 0) &1) ){PU_weight = PUweight_DoubleEG; }
-  // fake rate code
-  if(doBkgEst && uncbin.EqualTo("")){
-   if( ( ( bitsPassTwoMuZH      >> 0) &1) ){// TwoMuZH
-    fillBackgroundEstimateHistograms(event_weight);
-   }
-  }
   // fill the histograms
   for(unsigned int i=0; i<selbinnames.size(); ++i){
   //if(!isMC && run>=319077){/*std::cout<<"HEM Failure, run: "<<run<<std::endl;*/ continue;} // skips HEM Failure, saves prior to problem
@@ -508,12 +483,6 @@ TFile *outfile_bkgest = 0;
 // h_sum_AOD0thnPU->Delete();
 // outfile_nPU->Close();
  
- if(doBkgEst && uncbin.EqualTo("")){
-   //Can choose more regions here
-   outfile_bkgest->cd();
-   writeBackgroundEstimateHistograms(outfile_bkgest);
-   outfile_bkgest->Close();
- }
  if( uncbin.EqualTo("") ){
   optfile->cd();
   OPTtree->CloneTree()->Write();
@@ -671,57 +640,6 @@ void analyzer_loop::debug_printjets()
    printf( "  tagvars amax %.1f TA %.1f IP %.1f\n", AODCaloJetAlphaMax->at(jetindex), AODCaloJetMedianLog10TrackAngle->at(jetindex), AODCaloJetMedianLog10IPSig->at(jetindex));
   }
 
-
-// matching
-//  for(unsigned int k=0; k< aodcalojet_list.size(); ++k){
-//   std::cout<<" calojet "<<k<<"  "<<AODCaloJetPt->at(aodcalojet_list[k])<<std::endl;
-//  }
-//  std::cout<<"\n"<<std::endl;
-//  for(unsigned int k=0; k< aodpfjet_list.size(); ++k){
-//   std::cout<<" pfjet "<<k<<"  "<<AODPFJetPt->at(aodpfjet_list[k])<<std::endl;
-//  }
-//  std::cout<<"\n"<<std::endl;
-//  for(unsigned int k=0; k< aodpfchsjet_list.size(); ++k){
-//   std::cout<<" pfchsjet "<<k<<"  "<<AODPFchsJetPt->at(aodpfchsjet_list[k])<<std::endl;
-//  }
-//  std::cout<<"\n"<<std::endl;
-//  std::cout<<"\n"<<std::endl;
-// 
-//   // check to make sure both lists are always the same size
-//   if( calomatchedPF_list.size()!=PFmatchedCalo_list.size() ){
-//   std::cout<<" sizes: calo: "<<calomatchedPF_list.size()<<" pf: "<<PFmatchedCalo_list.size()<<std::endl;
-//   }
-//   if( calomatchedPFchs_list.size()!=PFchsmatchedCalo_list.size() ){
-//   std::cout<<" sizes: calo: "<<calomatchedPFchs_list.size()<<" pfchs: "<<PFchsmatchedCalo_list.size()<<std::endl;
-//   
-//   }
-// for(unsigned int k=0; k< calomatchedPF_list.size(); ++k){
-//  std::cout<<" calomatchdedPF "<<k<<"  "<<calomatchedPF_list[k]<<" Pt "<<AODCaloJetPt->at(calomatchedPF_list[k])<<"  "<<AODCaloJetEta->at(calomatchedPF_list[k])<<"  "<<AODCaloJetPhi->at(calomatchedPF_list[k])<<std::endl;
-// }
-// for(unsigned int k=0; k< PFmatchedCalo_list.size(); ++k){
-//  std::cout<<" PFmatchedCalo "<<k<<"  "<<PFmatchedCalo_list[k]<<" Pt "<<AODPFJetPt->at(PFmatchedCalo_list[k])<<"  "<<AODPFJetEta->at(PFmatchedCalo_list[k])<<"  "<<AODPFJetPhi->at(PFmatchedCalo_list[k])<<std::endl;
-// }
-// for(unsigned int k=0; k< calomatchedPFchs_list.size(); ++k){
-//  std::cout<<" calomatchedPFchs "<<k<<calomatchedPFchs_list[k]<<" Pt "<<"  "<<AODCaloJetPt->at(calomatchedPFchs_list[k])<<AODCaloJetEta->at(calomatchedPFchs_list[k])<<AODCaloJetPhi->at(calomatchedPFchs_list[k])<<std::endl;
-// }
-// for(unsigned int k=0; k< PFchsmatchedCalo_list.size(); ++k){
-//  std::cout<<" PFchsmatchedCalo "<<k<<PFchsmatchedCalo_list[k]<<" Pt "<<"  "<<AODPFchsJetPt->at(PFchsmatchedCalo_list[k])<<"  "<<AODPFchsJetEta->at(PFchsmatchedCalo_list[k])<<"  "<<AODPFchsJetPhi->at(PFchsmatchedCalo_list[k])<<std::endl;
-// }
-//
-//
-//  std::cout<<" calosize "<<aodcalojet_list.size()<<std::endl;
-//  std::cout<<" calomatchedPF ";
-//  for(unsigned int k=0; k< calomatchedPF_list.size(); ++k){
-//   std::cout<<k<<" "<<calomatchedPF_list[k]<<"  ";
-//  }
-//  std::cout<<std::endl;
-//
-//  std::cout<<"\n"<<std::endl;
-//  std::cout<<"\n"<<std::endl;
-
-
-
-
  return;
 }
 
@@ -737,10 +655,6 @@ void analyzer_loop::debug_printtriggers()
 ///// printf("AOD_HLT_IsoTkMu22  %llu \n", AOD_HLT_IsoTkMu22 ) ;
 ///// printf("AOD_HLT_Mu17Mu8    %llu \n", AOD_HLT_Mu17Mu8   ) ;
 ///// printf("AOD_HLT_Mu17TkMu8  %llu \n", AOD_HLT_Mu17TkMu8 ) ;
- //printf("AOD_HLT_Photon90 %llu \n", AOD_HLT_Photon90) ;
- //printf("AOD_HLT_Photon120 %llu \n", AOD_HLT_Photon120) ;
- //printf("AOD_HLT_Photon175 %llu \n", AOD_HLT_Photon175) ;
- //printf("AOD_HLT_Photon165_HE10 %llu \n", AOD_HLT_Photon165_HE10) ;
  //printf("AOD_HLT_Mu8Ele23 %llu \n", AOD_HLT_Mu8Ele23) ;
  //printf("AOD_HLT_Mu23Ele12 %llu \n", AOD_HLT_Mu23Ele12) ;
  //printf("AOD_HLT_Mu12Ele23_DZ %llu \n", AOD_HLT_Mu12Ele23_DZ) ;

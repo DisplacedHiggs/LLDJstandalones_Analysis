@@ -23,8 +23,6 @@ public :
    std::vector<int> muon_list ;
    std::vector<int> aodcalojet_list;
    std::vector<int> aodcalojet_L1PF_list;
-//   std::vector<int> aodpfjet_list;
-//   std::vector<int> aodpfchsjet_list;
    std::vector<int> taggedjet_list;
    std::vector<int> taggedjet_list_L1PF;
    std::vector<int> taggedjetSB1_list;
@@ -49,16 +47,7 @@ public :
    std::vector<int> taggedjetSBIPb_list;
    std::vector<int> taggedjetSBIPc_list;
 
-//   std::vector<int> calomatchedPF_list;
-//   std::vector<int> PFmatchedCalo_list;
-//   std::vector<int> calomatchedPFchs_list;
-//   std::vector<int> PFchsmatchedCalo_list;
-
    std::vector<float> aodcalojet_minDR_list;
-//   std::vector<float> aodcalojet_matchedCSV_list;
-//   std::vector<int>   aodcalojet_matchedPartonFlavour_list;
-
-//   int nBPartonFlavour;
 
    // for dilepton
    TLorentzVector fourVec_ee, fourVec_mm, fourVec_ll, fourVec_em;
@@ -68,8 +57,6 @@ public :
    Float_t dilep_pt, OSOF_pt;
 
    // personal variables
-//   Float_t themet;
-//   Float_t themephi;
    Float_t htall;
    Float_t htaodcalojets;
 
@@ -182,11 +169,7 @@ public :
    Int_t nSelectedAODCaloJet;
    Int_t nSelectedAODCaloJet_L1PF;
 
-//   Int_t n_totalPF;
-//   Int_t n_totalPFchs;
    Int_t n_totalCalo;
-//   Int_t n_matchedPFCalo;
-//   Int_t n_matchedPFchsCalo;
 
    Bool_t L1PFremoved;
 };

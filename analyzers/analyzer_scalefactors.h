@@ -32,11 +32,6 @@ public :
  TH2F*           MuonIso;
 // Float_t         makeTTWeight( Float_t TTavgweight );
 
- void               loadMistagRate();
- TH1F*              h_MistagRate_pt;
- std::vector<TH1F*> h_MistagRate_pt_sys;
- TH2F*              h_MistagRate_pteta;
- std::vector<TH2F*> h_MistagRate_pteta_sys;
  float eleID_Unc,muonID_Unc,muonISO_Unc,LeptonSF_Unc = 0.;
  std::vector<float> eleID_ind, muonID_ind, muonISO_ind;
 
