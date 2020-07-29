@@ -26,7 +26,6 @@ void taggerSlim(Double_t c_ip, Double_t c_ta, TString year, TString sample/*, In
   //cout <<"sample: "<<year+"_"+sample<<endl;
   
   TString nt, s_c_ip, s_c_ta, s_c_al, s_c_Zpt;
-  float tags;
  
   s_c_ip.Form("%1.2f",c_ip);
   s_c_ta.Form("%1.2f",c_ta);
@@ -34,7 +33,8 @@ void taggerSlim(Double_t c_ip, Double_t c_ta, TString year, TString sample/*, In
   double a_c_Zpt[6] = {50.0, 60.0, 70.0, 80.0, 90.0, 100.0};
   
   double MCSF = 1.0;
-
+  double lumiSF = 1.0;
+  //double DY_TRICK_WEIGHT = 0.5;
   // lumi 2016: 16226.2
   // lumi 2017: 42500.
   // lumi 2018: 58670.
@@ -45,16 +45,26 @@ void taggerSlim(Double_t c_ip, Double_t c_ta, TString year, TString sample/*, In
 
   // TTJets_amx SF(2018): 1.12778
  
-  if (sample.Contains("HToSSTobbbb") ) MCSF *= 117396.2/16226.2; // Extend to Full Lumi
-//  if (year == "2016" ) MCSF *= 1./0.8546545; // Remove overallDY SF 2016
-//  if (year == "2017" ) MCSF *= 1./0.780398; // Remove overallDY SF 2017
-//  if (year == "2018" ) MCSF *= 1./.7323; // Remove overallDY SF 2018
-//  if (year == "2018" && sample.Contains("TTJets") ) MCSF *= 1.12778; // apply TTJets SF 2018
-//  if (year == "2016" && sample.Contains("DYJetsToLL") ) MCSF *= 0.8546545;    // Re-apply DY SF 2016
-//  if (year == "2017" && sample.Contains("DYJetsToLL") ) MCSF *= 0.780398;     // Re-apply DY SF 2017
-//  if (year == "2018" && sample.Contains("DYJetsToLL") ) MCSF *= .7323;        // Re-apply DY SF 2018
+  //if (sample.Contains("HToSSTobbbb") ) MCSF *= 117396.2/16226.2; // Extend to Full Lumi
+  //if (year == "2016" ) MCSF *= 1./0.8546545; // Remove overallDY SF 2016
+  //if (year == "2017" ) MCSF *= 1./0.780398; // Remove overallDY SF 2017
+  //if (year == "2018" ) MCSF *= 1./.7323; // Remove overallDY SF 2018
+  //------------------------
+  //TTJETS SF
+  //------------------------
+  if (year == "2016" && ( sample.Contains("TTJets") || sample.Contains("TTtoLL") ) ) MCSF *= 0.875996130969567; // apply TTJets SF 2016
+  if (year == "2017" && ( sample.Contains("TTJets") || sample.Contains("TTtoLL") ) ) MCSF *= 0.81560721955917; // apply TTJets SF 2017
+  if (year == "2018" && ( sample.Contains("TTJets") || sample.Contains("TTtoLL") ) ) MCSF *= 0.815111248; // apply TTJets SF 2018
+  //------------------------
+  //Z->ee/mumu SF
+  //------------------------
+  if (year == "2016" && (sample.Contains("DYJetsToLL") || sample.Contains("HToSSTobbbb")) ) MCSF *= 0.8789170;    // apply DY SF 2016
+  if (year == "2017" && (sample.Contains("DYJetsToLL") || sample.Contains("HToSSTobbbb")) ) MCSF *= 0.7388745;     // apply DY SF 2017
+  if (year == "2018" && (sample.Contains("DYJetsToLL") || sample.Contains("HToSSTobbbb")) ) MCSF *= 0.7341290;        // apply DY SF 2018
 
-  cout <<"samples: "<<sample <<"   MCSF: "<<MCSF <<endl;
+  if (year == "2016" && sample.Contains("HToSSTobbbb") ) lumiSF *= 7.2156335893;    // scale 2016 lumi to full lumi-> 117085.2/16226.6 = 7.2156335893
+
+  std::cout <<"samples: "<<sample <<"   MCSF: "<< MCSF << " lumiSF: "  << lumiSF << std::endl;
 
   int Nbins = 6;
   TH1F* h_ntags      = new TH1F("h_ntags"      , "h_ntags"      , Nbins, -0.5, (float)(Nbins)-0.5);
@@ -132,20 +142,21 @@ void taggerSlim(Double_t c_ip, Double_t c_ta, TString year, TString sample/*, In
   
       h_ntags->Reset();
       h_ntags_base->Reset();
-     
-//      for(int ii=0; ii<NTags.size(); ii++){
-//      cout <<"i= "<<ii<<endl;
-//      cout << NTags          [ii]<<endl;
-//      cout << NTagsError     [ii]<<endl;
-//      cout << NTags_bare     [ii]<<endl;
-//      cout << NTags_base     [ii]<<endl;
-//      cout << NTags_baseError[ii]<<endl;
-//      cout << NTags_ele      [ii]<<endl;
-//      cout << NTags_eleError [ii]<<endl;
-//      cout << NTags_PU       [ii]<<endl;
-//      cout << NTags_PUError  [ii]<<endl;
-//
-//      }
+
+      /*
+      for(int ii=0; ii<NTags.size(); ii++){
+      cout <<"i= "<<ii<<endl;
+      cout << NTags          [ii]<<endl;
+      cout << NTagsError     [ii]<<endl;
+      cout << NTags_bare     [ii]<<endl;
+      cout << NTags_base     [ii]<<endl;
+      cout << NTags_baseError[ii]<<endl;
+      cout << NTags_ele      [ii]<<endl;
+      cout << NTags_eleError [ii]<<endl;
+      cout << NTags_PU       [ii]<<endl;
+      cout << NTags_PUError  [ii]<<endl;
+
+      }*/
       
       TTreeReader reader("OPTtree",f2);
       TTreeReaderValue<vector<int>>    Event(reader,       "OPT_Event"); // template type must match datatype
@@ -162,25 +173,31 @@ void taggerSlim(Double_t c_ip, Double_t c_ta, TString year, TString sample/*, In
       TTreeReaderValue<vector<float>>  Alpha(reader,       "OPT_AODCaloJetAlphaMax");
       TTreeReaderValue<vector<float>>  Eta(reader,         "OPT_AODCaloJetEta");
       //std::cout << FileName << std::endl;
+      //int count = 0;
+      //int ntag_low_zpt;
+      //double sample_weight = 0.0;
       int count = 0;
-      int ntag_low_zpt;
-      double sample_weight = 0.0;
+      double count_weight = 0;
       while (reader.Next()) {
+	if ( EventWeight->size() > 1 ) std::cout << "EventWeight LARGER THAN 1" << std::endl;
         for(int i = 0; i<EventWeight->size(); i++){
           Z_Sf = ZSf->at(i);
-          tags =0;
-	  ntag_low_zpt = 0;
+          int tags = 0;
+	  int ntag_low_zpt = 0;
+	  //std::cout << TA->size() << std::endl;
           for (int j=0; j<TA->size(); j++)
 	    {
 	      if(Alpha->at(j)<=c_al && IP->at(j)>=c_ip && TA->at(j)>=c_ta && Alpha->at(j)>=0.0 && ZPt->at(i)>=c_Zpt ) tags = tags + 1;
-	      if(Alpha->at(j)<=c_al && IP->at(j)>=c_ip && TA->at(j)>=c_ta && Alpha->at(j)>=0.0 && ZPt->at(i)<=c_Zpt ) ntag_low_zpt = ntag_low_zpt+1;
+	      if(Alpha->at(j)<=c_al && IP->at(j)>=c_ip && TA->at(j)>=c_ta && Alpha->at(j)>=0.0 && ZPt->at(i) < c_Zpt ) ntag_low_zpt = ntag_low_zpt+1;
 	    }
-	  double weight          = MCSF*base_weight->at(i);//xsec weight;
+	  double weight          = lumiSF* MCSF*base_weight->at(i);//xsec weight;
+	  //double weight          = MCSF*base_weight->at(i);//xsec weight;
 	  double weight_eleSF    = weight*ele_weight->at(i);//xsec weight*eleSF;
 	  double full_weight     = weight*ele_weight->at(i)*PU_weight->at(i);//full-weight;
-	  if( i == 0 ) sample_weight = weight;
+	  count_weight += full_weight;
+	  //if( i == 0 ) sample_weight = weight;
 
-          if(tags<Nbins)
+          if(tags<Nbins && ZPt->at(i)>=c_Zpt)//avoid o-tag bing to always count regardless of Z-pt
 	    {
 	      NTags_bare      [tags]   = NTags_bare[tags]      + 1; //count raw mc events
 	      NTags           [tags]   = NTags[tags]           + full_weight;//full weight
@@ -192,7 +209,7 @@ void taggerSlim(Double_t c_ip, Double_t c_ta, TString year, TString sample/*, In
 	      h_ntags_base->Fill(tags, MCSF*base_weight->at(i)); 
 	    }
 
-	  if(ntag_low_zpt<Nbins)
+	  if(ntag_low_zpt<Nbins && ZPt->at(i) < c_Zpt)//avoid o-tag bing to always count regardless of Z-pt
 	    {
 	      NTags_bare_low      [ntag_low_zpt]   = NTags_bare_low[ntag_low_zpt]      + 1; //count raw mc events
               NTags_low           [ntag_low_zpt]   = NTags_low[ntag_low_zpt]           + full_weight;//full weight
@@ -202,37 +219,14 @@ void taggerSlim(Double_t c_ip, Double_t c_ta, TString year, TString sample/*, In
               NTags_ele_low       [ntag_low_zpt]   = NTags_ele_low[ntag_low_zpt]       + weight_eleSF;//xsec*eleSF
               NTags_eleError_low  [ntag_low_zpt]   = NTags_eleError_low[ntag_low_zpt]  + pow(weight_eleSF, 2.0);//xsec*eleSF
 	    }
-//      for(int ii=0; ii<1 /*NTags.size()*/; ii++){
-//      cout <<"i= "<<ii<<endl;
-//      cout <<"NTags            "<< NTags          [ii]<<"  __  " << MCSF*(base_weight->at(i)*ele_weight->at(i)*PU_weight->at(i))  <<endl;
-//      cout <<"NTagsError       "<< NTagsError     [ii]<<"  __  " << sqrt((MCSF*MCSF*base_weight->at(i)*base_weight->at(i)) + (ele_weight->at(i)*ele_weight->at(i)) + (PU_weight->at(i)*PU_weight->at(i)))<<endl;
-//      cout <<"NTags_bare       "<< NTags_bare     [ii]<<"  __  " << 1 <<endl;
-//      cout <<"NTags_base       "<< NTags_base     [ii]<<"  __  " << MCSF*base_weight->at(i)                    <<endl;
-//      cout <<"NTags_baseError  "<< NTags_baseError[ii]<<"  __  " << MCSF*MCSF*base_weight->at(i)*base_weight->at(i)  <<endl;
-//      cout <<"NTags_ele        "<< NTags_ele      [ii]<<"  __  " << ele_weight->at(i)                     <<endl;
-//      cout <<"NTags_eleError   "<< NTags_eleError [ii]<<"  __  " << ele_weight->at(i)*ele_weight->at(i)    <<endl;
-//      cout <<"NTags_PU         "<< NTags_PU       [ii]<<"  __  " << PU_weight->at(i)                      <<endl;
-//      cout <<"NTags_PUError    "<< NTags_PUError  [ii]<<"  __  " << PU_weight->at(i)*PU_weight->at(i)     <<endl;
-//      }
-//      cout << "count: "<< count<< endl;
-//      cout<<FileName<<"  "<<c_Zpt<<"  "<<Z_Sf<<" "<<c_ip<<" "<<c_ta<<" "<<c_al<<" "<<NTags_bare[0]<<" "<<NTags_base[0]<<" "<<sqrt(NTags_baseError[0])<<" "
-//                                                                                                                <<NTags_ele [0]<<" "<<sqrt(NTags_eleError [0])<<" "
-//                                                                                                                <<NTags_PU  [0]<<" "<<sqrt(NTags_PUError  [0])<<" "
-//                                                                                                                <<NTags     [0]<<" "<<NTagsError          [0] <<" "
-//                                                                                                                <<NTags_base[1]<<" "<<sqrt(NTags_baseError[1])<<" "
-//                                                                                                                <<NTags_ele [1]<<" "<<sqrt(NTags_eleError [1])<<" "
-//                                                                                                                <<NTags_PU  [1]<<" "<<sqrt(NTags_PUError  [1])<<" "
-//                                                                                                                <<NTags     [1]<<" "<<NTagsError          [1] <<" "
-//                                                                                                                <<base_2p      <<" "<<sqrt(baseE_2p)          <<" "
-//                                                                                                                <<ele_2p       <<" "<<sqrt(eleE_2p)           <<" "  
-//                                                                                                                <<PU_2p        <<" "<<sqrt(PUE_2p)            <<" "
-//                                                                                                                <<EW_2p        <<" "<<EW_E2p                  <<" "
-//                                                                                                                <<endl;
         }
         
       count = count +1;
       //      if (count ==10) break;
-      }
+      }//end event loop
+
+      //std::cout << "nEvents: " << count << " weight: " << count_weight << std::endl;
+
       for(int nn =0; nn<NTags_bare.size(); nn++){
 	h_ntags->SetBinContent(nn+1,NTags_bare[nn]);
       }
