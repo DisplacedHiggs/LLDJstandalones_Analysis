@@ -46,16 +46,6 @@ void analyzer_config::setConfiguration()
  tag_minIPsig = 1.15; //  0.5 ;  0.5 ;  1.15;  1.15;  1.25;  // loggit
  tag_minTA    =-1.5 ; // -1.5 ; -1.5 ; -1.5 ; -1.5 ; -1.75;  // loggit
 
- // Table from "mrtusOrig" $aversion                         //loggit
- //          | EleMuOSOF | OnePho | TwoMuDY   | TwoEleDY     //loggit
- //-------------------------------|------------------------  //loggit
- //AMax In   | 0.750     | 0.750  |  0.750    |  0.750    |  //loggit   
- //AMax Out  | 0.758     | 0.762  |  0.756    |  0.760    |  //loggit   
- //IPSig In  | 1.150     | 1.150  |  1.150    |  1.150    |  //loggit   
- //IPSig Out | 1.249     | 1.109  |  1.137    |  1.137    |  //loggit   
- //TA In     | -1.750    | -1.750 | -1.750    | -1.750    |  //loggit   
- //TA Out    | -1.759    | -1.773 | -1.773    | -1.773    |  //loggit
-
  // shifted tagging variables              // loggit
  // %TF unc WP         80         70       60       100      80      ZD_WP1                
  tag_shiftmaxAmax   =  0.909; //  0.505 ;  0.505 ;  0.606 ;  0.909 ; 0.404;    // loggit

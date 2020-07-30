@@ -42,33 +42,35 @@ std::vector<int> analyzer_createobjects::muon_passID( Float_t muPtCut1, Float_t 
 //-------------------------electron_passID
 std::vector<int> analyzer_createobjects::electron_passID( int bitnr, Float_t elePtCut1, Float_t elePtCut2, Float_t eleEtaCut, TString sysbinname)
 {
-
  std::vector<int> elelist;
- // veto loose medium tight heep hlt
 
  for(int i = 0; i < nAODEle; i++)
  {
-
   Float_t electronPt = getElectronPt(i,sysbinname);
 
   bool pass_kin = false;
   if( i==0 ) pass_kin =  (electronPt > elePtCut1) && ( fabs(AOD_eleEta->at(i)) < eleEtaCut ) ;
   else       pass_kin =  (electronPt > elePtCut2) && ( fabs(AOD_eleEta->at(i)) < eleEtaCut ) ;
 
-
-
-  bool pass_convsersion_veto = (AOD_elePassConversionVeto->at(i) > 0); //could have been bool
+  bool pass_convsersion_veto = (AOD_elePassConversionVeto->at(i) > 0);
 
   bool pass_bit = AOD_eleIDbit->at(i) >> bitnr & 0x1 == 1;
 
   bool pass_overlap = true;
+  //if(photon_list.size()>0){
+  // for(int d=0; d<photon_list.size(); ++d){
+  //  int phoindex = photon_list[d];
+  //  if(phoindex<= (AOD_phoEta->size()-1) && phoindex<= (AOD_phoPhi->size()-1)){
+  //   if( dR( AOD_phoEta->at(phoindex),AOD_phoPhi->at(phoindex), AOD_eleEta->at(i),AOD_elePhi->at(i) ) < objcleandRcut )  pass_overlap=false;
+  //  }
+  // }//end photons
+  //} // if photons
 
   bool pass_crack = (fabs(AOD_eleEta->at(i))<1.442) ||  (fabs(AOD_eleEta->at(i))>1.566);
 
   if( pass_bit && pass_kin && pass_overlap && pass_convsersion_veto && pass_crack )
   {
    nSelectedEle++;
-   //printf(" a selected electron\n");
    elelist.push_back(i);
   } // if pass_bit && pass_kin
  } // loop over electrons
