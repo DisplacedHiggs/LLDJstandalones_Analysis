@@ -34,12 +34,9 @@ void analyzer_base::Init(TChain *tree, Bool_t isitMC, Bool_t domakelog, TString 
    // MC and Data
    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
    // set object pointers
-   AODnGoodVtx = 0;
-   AODnVtx = 0;
-   AODnTruePU = 0;
-//   AOD0thnPU = 0;
-   ctauEventWeight = 1.;
    AODCaloJetPt = 0;
+   AODCaloJetPt_JECUp = 0;
+   AODCaloJetPt_JECDown = 0;
    AODCaloJetEta = 0;
    AODCaloJetPhi = 0;
    AODCaloJetAlphaMax = 0;
@@ -107,16 +104,19 @@ void analyzer_base::Init(TChain *tree, Bool_t isitMC, Bool_t domakelog, TString 
    AOD_phoSCEn = 0;
    AOD_phoSCEta = 0;
    AOD_phoSCPhi = 0;
+   AOD_phoSCPhi = 0;
    AOD_elePt = 0;
    AOD_eleEn = 0;
    AOD_eleEta = 0;
    AOD_elePhi = 0;
+   AOD_eled0 = 0;
+   AOD_eledz = 0;
    AOD_eleCharge = 0;
    AOD_eleChargeConsistent = 0;
    AOD_eleIDbit = 0;
    AOD_elePassConversionVeto = 0;
-   AOD_eled0 = 0;
-   AOD_eledz = 0;
+   // Set weights to 1 by default
+   ctauEventWeight = 1.;
    AODGenEventWeight = 1.;
    // Set branch addresses and branch pointers
    if (!tree) return;
@@ -129,44 +129,42 @@ void analyzer_base::Init(TChain *tree, Bool_t isitMC, Bool_t domakelog, TString 
    fChain->SetBranchAddress("lumis", &lumis, &b_lumis);
    fChain->SetBranchAddress("isData", &isData, &b_isData);
    fChain->SetBranchAddress("AODnTruePU", &AODnTruePU, &b_AODnTruePU);
-  // fChain->SetBranchAddress("AOD0thnPU", &AOD0thnPU, &b_AOD0thnPU);
    fChain->SetBranchAddress("AODnVtx", &AODnVtx, &b_AODnVtx);
    fChain->SetBranchAddress("AODnGoodVtx", &AODnGoodVtx, &b_AODnGoodVtx);
    fChain->SetBranchAddress("AODnTrksPV", &AODnTrksPV, &b_AODnTrksPV);
    fChain->SetBranchAddress("AODisPVGood", &AODisPVGood, &b_AODisPVGood);
    fChain->SetBranchAddress("ctau_eventweight", &ctauEventWeight, &b_ctauEventWeight);
-   //ele ele
-   fChain->SetBranchAddress("AOD_HLT_DoubleEle33", &AOD_HLT_DoubleEle33, &b_AOD_HLT_DoubleEle33);    
+   fChain->SetBranchAddress("AODGenEventWeight", &AODGenEventWeight, &b_AODGenEventWeight);
+   fChain->SetBranchAddress("AOD_HLT_DoubleEle33", &AOD_HLT_DoubleEle33, &b_AOD_HLT_DoubleEle33);
    fChain->SetBranchAddress("AOD_HLT_Ele23Ele12", &AOD_HLT_Ele23Ele12, &b_AOD_HLT_Ele23Ele12);
    fChain->SetBranchAddress("AOD_HLT_Ele23Ele12_noDZ", &AOD_HLT_Ele23Ele12_noDZ, &b_AOD_HLT_Ele23Ele12_noDZ);
-   fChain->SetBranchAddress("AOD_HLT_DoubleEle33_isPS", &AOD_HLT_DoubleEle33_isPS, &b_AOD_HLT_DoubleEle33_isPS);
-   fChain->SetBranchAddress("AOD_HLT_Ele23Ele12_isPS", &AOD_HLT_Ele23Ele12_isPS, &b_AOD_HLT_Ele23Ele12_isPS);
-   fChain->SetBranchAddress("AOD_HLT_Ele23Ele12_noDZ_isPS", &AOD_HLT_Ele23Ele12_noDZ_isPS, &b_AOD_HLT_Ele23Ele12_noDZ_isPS);
-   //mu mu
    fChain->SetBranchAddress("AOD_HLT_Mu17Mu8", &AOD_HLT_Mu17Mu8, &b_AOD_HLT_Mu17Mu8);
    fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_Mass8", &AOD_HLT_Mu17Mu8_Mass8, &b_AOD_HLT_Mu17Mu8_Mass8);
    fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_Mass3p8", &AOD_HLT_Mu17Mu8_Mass3p8, &b_AOD_HLT_Mu17Mu8_Mass3p8);
    fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_noDZ", &AOD_HLT_Mu17Mu8_noDZ, &b_AOD_HLT_Mu17Mu8_noDZ);
-   fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_isPS", &AOD_HLT_Mu17Mu8_isPS, &b_AOD_HLT_Mu17Mu8_isPS);
-   fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_Mass8_isPS", &AOD_HLT_Mu17Mu8_Mass8_isPS, &b_AOD_HLT_Mu17Mu8_Mass8_isPS);
-   fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_Mass3p8_isPS", &AOD_HLT_Mu17Mu8_Mass3p8_isPS, &b_AOD_HLT_Mu17Mu8_Mass3p8_isPS);
-   fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_noDZ_isPS", &AOD_HLT_Mu17Mu8_noDZ_isPS, &b_AOD_HLT_Mu17Mu8_noDZ_isPS);
-   //mu ele
    fChain->SetBranchAddress("AOD_HLT_Mu8Ele23_DZ", &AOD_HLT_Mu8Ele23_DZ, &b_AOD_HLT_Mu8Ele23_DZ);
    fChain->SetBranchAddress("AOD_HLT_Mu8Ele23_noDZ", &AOD_HLT_Mu8Ele23_noDZ, &b_AOD_HLT_Mu8Ele23_noDZ);
    fChain->SetBranchAddress("AOD_HLT_Mu23Ele12_DZ", &AOD_HLT_Mu23Ele12_DZ, &b_AOD_HLT_Mu23Ele12_DZ);
    fChain->SetBranchAddress("AOD_HLT_Mu23Ele12_noDZ", &AOD_HLT_Mu23Ele12_noDZ, &b_AOD_HLT_Mu23Ele12_noDZ);
    fChain->SetBranchAddress("AOD_HLT_Mu12Ele23_DZ", &AOD_HLT_Mu12Ele23_DZ, &b_AOD_HLT_Mu12Ele23_DZ);
    fChain->SetBranchAddress("AOD_HLT_Mu12Ele23_noDZ", &AOD_HLT_Mu12Ele23_noDZ, &b_AOD_HLT_Mu12Ele23_noDZ);
+   fChain->SetBranchAddress("AOD_HLT_DoubleEle33_isPS", &AOD_HLT_DoubleEle33_isPS, &b_AOD_HLT_DoubleEle33_isPS);
+   fChain->SetBranchAddress("AOD_HLT_Ele23Ele12_isPS", &AOD_HLT_Ele23Ele12_isPS, &b_AOD_HLT_Ele23Ele12_isPS);
+   fChain->SetBranchAddress("AOD_HLT_Ele23Ele12_noDZ_isPS", &AOD_HLT_Ele23Ele12_noDZ_isPS, &b_AOD_HLT_Ele23Ele12_noDZ_isPS);
+   fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_isPS", &AOD_HLT_Mu17Mu8_isPS, &b_AOD_HLT_Mu17Mu8_isPS);
+   fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_Mass8_isPS", &AOD_HLT_Mu17Mu8_Mass8_isPS, &b_AOD_HLT_Mu17Mu8_Mass8_isPS);
+   fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_Mass3p8_isPS", &AOD_HLT_Mu17Mu8_Mass3p8_isPS, &b_AOD_HLT_Mu17Mu8_Mass3p8_isPS);
+   fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_noDZ_isPS", &AOD_HLT_Mu17Mu8_noDZ_isPS, &b_AOD_HLT_Mu17Mu8_noDZ_isPS);
    fChain->SetBranchAddress("AOD_HLT_Mu8Ele23_DZ_isPS", &AOD_HLT_Mu8Ele23_DZ_isPS, &b_AOD_HLT_Mu8Ele23_DZ_isPS);
    fChain->SetBranchAddress("AOD_HLT_Mu8Ele23_noDZ_isPS", &AOD_HLT_Mu8Ele23_noDZ_isPS, &b_AOD_HLT_Mu8Ele23_noDZ_isPS);
    fChain->SetBranchAddress("AOD_HLT_Mu23Ele12_DZ_isPS", &AOD_HLT_Mu23Ele12_DZ_isPS, &b_AOD_HLT_Mu23Ele12_DZ_isPS);
    fChain->SetBranchAddress("AOD_HLT_Mu23Ele12_noDZ_isPS", &AOD_HLT_Mu23Ele12_noDZ_isPS, &b_AOD_HLT_Mu23Ele12_noDZ_isPS);
    fChain->SetBranchAddress("AOD_HLT_Mu12Ele23_DZ_isPS", &AOD_HLT_Mu12Ele23_DZ_isPS, &b_AOD_HLT_Mu12Ele23_DZ_isPS);
    fChain->SetBranchAddress("AOD_HLT_Mu12Ele23_noDZ_isPS", &AOD_HLT_Mu12Ele23_noDZ_isPS, &b_AOD_HLT_Mu12Ele23_noDZ_isPS);
-   //
    fChain->SetBranchAddress("AODnCaloJet", &AODnCaloJet, &b_AODnCaloJet);
    fChain->SetBranchAddress("AODCaloJetPt", &AODCaloJetPt, &b_AODCaloJetPt);
+   fChain->SetBranchAddress("AODCaloJetPt_JECUp", &AODCaloJetPt_JECUp, &b_AODCaloJetPt_JECUp);
+   fChain->SetBranchAddress("AODCaloJetPt_JECDown", &AODCaloJetPt_JECDown, &b_AODCaloJetPt_JECDown);
    fChain->SetBranchAddress("AODCaloJetEta", &AODCaloJetEta, &b_AODCaloJetEta);
    fChain->SetBranchAddress("AODCaloJetPhi", &AODCaloJetPhi, &b_AODCaloJetPhi);
    fChain->SetBranchAddress("AODCaloJetAlphaMax", &AODCaloJetAlphaMax, &b_AODCaloJetAlphaMax);
@@ -241,14 +239,12 @@ void analyzer_base::Init(TChain *tree, Bool_t isitMC, Bool_t domakelog, TString 
    fChain->SetBranchAddress("AOD_eleEn", &AOD_eleEn, &b_AOD_eleEn);
    fChain->SetBranchAddress("AOD_eleEta", &AOD_eleEta, &b_AOD_eleEta);
    fChain->SetBranchAddress("AOD_elePhi", &AOD_elePhi, &b_AOD_elePhi);
+   fChain->SetBranchAddress("AOD_eled0", &AOD_eled0, &b_AOD_eled0);
+   fChain->SetBranchAddress("AOD_eledz", &AOD_eledz, &b_AOD_eledz);
    fChain->SetBranchAddress("AOD_eleCharge", &AOD_eleCharge, &b_AOD_eleCharge);
    fChain->SetBranchAddress("AOD_eleChargeConsistent", &AOD_eleChargeConsistent, &b_AOD_eleChargeConsistent);
    fChain->SetBranchAddress("AOD_eleIDbit", &AOD_eleIDbit, &b_AOD_eleIDbit);
    fChain->SetBranchAddress("AOD_elePassConversionVeto", &AOD_elePassConversionVeto, &b_AOD_elePassConversionVeto);
-   fChain->SetBranchAddress("AOD_eled0", &AOD_eled0, &b_AOD_eled0);
-   fChain->SetBranchAddress("AOD_eledz", &AOD_eledz, &b_AOD_eledz);
    fChain->SetBranchAddress("AOD_CaloMET_pt", &AOD_CaloMET_pt, &b_AOD_CaloMET_pt);
    fChain->SetBranchAddress("AOD_CaloMET_phi", &AOD_CaloMET_phi, &b_AOD_CaloMET_phi);
-   fChain->SetBranchAddress("AODGenEventWeight", &AODGenEventWeight, &b_AODGenEventWeight);
-
 }

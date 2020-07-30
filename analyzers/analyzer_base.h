@@ -42,35 +42,32 @@ public :
    Int_t           lumis;
    Bool_t          isData;
    Int_t           AODnTruePU;
-//   Int_t           AOD0thnPU;
    Int_t           AODnVtx;
    Int_t           AODnGoodVtx;
    Int_t           AODnTrksPV;
    Bool_t          AODisPVGood;
-   Float_t   ctauEventWeight;
-   //ele ele
+   Float_t         ctauEventWeight;
+   Float_t         AODGenEventWeight;
    ULong64_t       AOD_HLT_DoubleEle33;
    ULong64_t       AOD_HLT_Ele23Ele12;
    ULong64_t       AOD_HLT_Ele23Ele12_noDZ;
-   ULong64_t       AOD_HLT_DoubleEle33_isPS;
-   ULong64_t       AOD_HLT_Ele23Ele12_isPS;
-   ULong64_t       AOD_HLT_Ele23Ele12_noDZ_isPS;
-   //mu mu
    ULong64_t       AOD_HLT_Mu17Mu8;
    ULong64_t       AOD_HLT_Mu17Mu8_Mass8;
    ULong64_t       AOD_HLT_Mu17Mu8_Mass3p8;
    ULong64_t       AOD_HLT_Mu17Mu8_noDZ;
-   ULong64_t       AOD_HLT_Mu17Mu8_isPS;
-   ULong64_t       AOD_HLT_Mu17Mu8_Mass8_isPS;
-   ULong64_t       AOD_HLT_Mu17Mu8_Mass3p8_isPS;
-   ULong64_t       AOD_HLT_Mu17Mu8_noDZ_isPS;
-   //mu ele
    ULong64_t       AOD_HLT_Mu8Ele23_DZ;
    ULong64_t       AOD_HLT_Mu8Ele23_noDZ;
    ULong64_t       AOD_HLT_Mu23Ele12_DZ;
    ULong64_t       AOD_HLT_Mu23Ele12_noDZ;
    ULong64_t       AOD_HLT_Mu12Ele23_DZ;
    ULong64_t       AOD_HLT_Mu12Ele23_noDZ;
+   ULong64_t       AOD_HLT_DoubleEle33_isPS;
+   ULong64_t       AOD_HLT_Ele23Ele12_isPS;
+   ULong64_t       AOD_HLT_Ele23Ele12_noDZ_isPS;
+   ULong64_t       AOD_HLT_Mu17Mu8_isPS;
+   ULong64_t       AOD_HLT_Mu17Mu8_Mass8_isPS;
+   ULong64_t       AOD_HLT_Mu17Mu8_Mass3p8_isPS;
+   ULong64_t       AOD_HLT_Mu17Mu8_noDZ_isPS;
    ULong64_t       AOD_HLT_Mu8Ele23_DZ_isPS;
    ULong64_t       AOD_HLT_Mu8Ele23_noDZ_isPS;
    ULong64_t       AOD_HLT_Mu23Ele12_DZ_isPS;
@@ -79,6 +76,8 @@ public :
    ULong64_t       AOD_HLT_Mu12Ele23_noDZ_isPS;
    Int_t           AODnCaloJet;
    std::vector<float>   *AODCaloJetPt;
+   std::vector<float>   *AODCaloJetPt_JECUp;
+   std::vector<float>   *AODCaloJetPt_JECDown;
    std::vector<float>   *AODCaloJetEta;
    std::vector<float>   *AODCaloJetPhi;
    std::vector<float>   *AODCaloJetAlphaMax;
@@ -153,15 +152,14 @@ public :
    std::vector<float>   *AOD_eleEn;
    std::vector<float>   *AOD_eleEta;
    std::vector<float>   *AOD_elePhi;
+   std::vector<float>   *AOD_eled0;
+   std::vector<float>   *AOD_eledz;
    std::vector<int>     *AOD_eleCharge;
    std::vector<int>     *AOD_eleChargeConsistent;
    std::vector<unsigned short> *AOD_eleIDbit;
    std::vector<int>     *AOD_elePassConversionVeto;
-   std::vector<float>        *AOD_eled0;
-   std::vector<float>        *AOD_eledz;
    Float_t         AOD_CaloMET_pt;
    Float_t         AOD_CaloMET_phi;
-   Float_t         AODGenEventWeight;
 
    // List of branches
    TBranch        *b_run;   //!
@@ -169,43 +167,42 @@ public :
    TBranch        *b_lumis;   //!
    TBranch        *b_isData;   //!
    TBranch        *b_AODnTruePU;   //!
-   //TBranch        *b_AOD0thnPU;   //!
    TBranch        *b_AODnVtx;   //!
    TBranch        *b_AODnGoodVtx;   //!
    TBranch        *b_AODnTrksPV;   //!
    TBranch        *b_AODisPVGood;   //!
    TBranch        *b_ctauEventWeight;   //!
-   //ele ele
-   TBranch       *b_AOD_HLT_DoubleEle33;//!
-   TBranch       *b_AOD_HLT_Ele23Ele12;//!
-   TBranch       *b_AOD_HLT_Ele23Ele12_noDZ;//!
-   TBranch       *b_AOD_HLT_DoubleEle33_isPS;//!
-   TBranch       *b_AOD_HLT_Ele23Ele12_isPS;//!
-   TBranch       *b_AOD_HLT_Ele23Ele12_noDZ_isPS;//!
-   //mu mu
-   TBranch       *b_AOD_HLT_Mu17Mu8;//!
-   TBranch       *b_AOD_HLT_Mu17Mu8_Mass8;//!
-   TBranch       *b_AOD_HLT_Mu17Mu8_Mass3p8;//!
-   TBranch       *b_AOD_HLT_Mu17Mu8_noDZ;//!
-   TBranch       *b_AOD_HLT_Mu17Mu8_isPS;//!
-   TBranch       *b_AOD_HLT_Mu17Mu8_Mass8_isPS;//!
-   TBranch       *b_AOD_HLT_Mu17Mu8_Mass3p8_isPS;//!
-   TBranch       *b_AOD_HLT_Mu17Mu8_noDZ_isPS;//!
-   //mu ele
-   TBranch       *b_AOD_HLT_Mu8Ele23_DZ;//!
-   TBranch       *b_AOD_HLT_Mu8Ele23_noDZ;//!
-   TBranch       *b_AOD_HLT_Mu23Ele12_DZ;//!
-   TBranch       *b_AOD_HLT_Mu23Ele12_noDZ;//!
-   TBranch       *b_AOD_HLT_Mu12Ele23_DZ;//!
-   TBranch       *b_AOD_HLT_Mu12Ele23_noDZ;//!
-   TBranch       *b_AOD_HLT_Mu8Ele23_DZ_isPS;//!
-   TBranch       *b_AOD_HLT_Mu8Ele23_noDZ_isPS;//!
-   TBranch       *b_AOD_HLT_Mu23Ele12_DZ_isPS;//!
-   TBranch       *b_AOD_HLT_Mu23Ele12_noDZ_isPS;//!
-   TBranch       *b_AOD_HLT_Mu12Ele23_DZ_isPS;//!
-   TBranch       *b_AOD_HLT_Mu12Ele23_noDZ_isPS;//!
+   TBranch        *b_AODGenEventWeight;   //!
+   TBranch        *b_AOD_HLT_DoubleEle33;   //!
+   TBranch        *b_AOD_HLT_Ele23Ele12;   //!
+   TBranch        *b_AOD_HLT_Ele23Ele12_noDZ;   //!
+   TBranch        *b_AOD_HLT_Mu17Mu8;   //!
+   TBranch        *b_AOD_HLT_Mu17Mu8_Mass8;   //!
+   TBranch        *b_AOD_HLT_Mu17Mu8_Mass3p8;   //!
+   TBranch        *b_AOD_HLT_Mu17Mu8_noDZ;   //!
+   TBranch        *b_AOD_HLT_Mu8Ele23_DZ;   //!
+   TBranch        *b_AOD_HLT_Mu8Ele23_noDZ;   //!
+   TBranch        *b_AOD_HLT_Mu23Ele12_DZ;   //!
+   TBranch        *b_AOD_HLT_Mu23Ele12_noDZ;   //!
+   TBranch        *b_AOD_HLT_Mu12Ele23_DZ;   //!
+   TBranch        *b_AOD_HLT_Mu12Ele23_noDZ;   //!
+   TBranch        *b_AOD_HLT_DoubleEle33_isPS;   //!
+   TBranch        *b_AOD_HLT_Ele23Ele12_isPS;   //!
+   TBranch        *b_AOD_HLT_Ele23Ele12_noDZ_isPS;   //!
+   TBranch        *b_AOD_HLT_Mu17Mu8_isPS;   //!
+   TBranch        *b_AOD_HLT_Mu17Mu8_Mass8_isPS;   //!
+   TBranch        *b_AOD_HLT_Mu17Mu8_Mass3p8_isPS;   //!
+   TBranch        *b_AOD_HLT_Mu17Mu8_noDZ_isPS;   //!
+   TBranch        *b_AOD_HLT_Mu8Ele23_DZ_isPS;   //!
+   TBranch        *b_AOD_HLT_Mu8Ele23_noDZ_isPS;   //!
+   TBranch        *b_AOD_HLT_Mu23Ele12_DZ_isPS;   //!
+   TBranch        *b_AOD_HLT_Mu23Ele12_noDZ_isPS;   //!
+   TBranch        *b_AOD_HLT_Mu12Ele23_DZ_isPS;   //!
+   TBranch        *b_AOD_HLT_Mu12Ele23_noDZ_isPS;   //!
    TBranch        *b_AODnCaloJet;   //!
    TBranch        *b_AODCaloJetPt;   //!
+   TBranch        *b_AODCaloJetPt_JECUp;   //!
+   TBranch        *b_AODCaloJetPt_JECDown;   //!
    TBranch        *b_AODCaloJetEta;   //!
    TBranch        *b_AODCaloJetPhi;   //!
    TBranch        *b_AODCaloJetAlphaMax;   //!
@@ -280,15 +277,15 @@ public :
    TBranch        *b_AOD_eleEn;   //!
    TBranch        *b_AOD_eleEta;   //!
    TBranch        *b_AOD_elePhi;   //!
+   TBranch        *b_AOD_eled0;   //!
+   TBranch        *b_AOD_eledz;   //!
    TBranch        *b_AOD_eleCharge;   //!
    TBranch        *b_AOD_eleChargeConsistent;   //!
    TBranch        *b_AOD_eleIDbit;   //!
    TBranch        *b_AOD_elePassConversionVeto;   //!
-   TBranch        *b_AOD_eled0;   //!
-   TBranch        *b_AOD_eledz;   //!
    TBranch        *b_AOD_CaloMET_pt;   //!
    TBranch        *b_AOD_CaloMET_phi;   //!
-   TBranch        *b_AODGenEventWeight;   //!
+
 
    //analyzer_base(TTree *tree=0);
    analyzer_base();
