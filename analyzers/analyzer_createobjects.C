@@ -10,9 +10,6 @@ analyzer_createobjects::~analyzer_createobjects()
 {
 }
 
-
-//----------------------------analyzer_createobjects
-
 //-------------------------muon_passID
 std::vector<int> analyzer_createobjects::muon_passID( Float_t muPtCut1, Float_t muPtCut2, Float_t muEtaCut, TString sysbinname)
 {
@@ -100,6 +97,23 @@ std::vector<int> analyzer_createobjects::jet_passTagger( ) {
   return taglist;
 }
 
+std::vector<int> analyzer_createobjects::jet_passTagger_L1PF( ) {
+
+  std::vector<int> taglist;
+
+  for(int i=0; i<aodcalojet_L1PF_list.size(); ++i){
+   int aodcalojetindex = aodcalojet_L1PF_list[i];
+   if( Shifted_CaloJetMedianLog10IPSig.at(aodcalojetindex)      >=  tag_minIPsig  &&
+       Shifted_CaloJetMedianLog10TrackAngle.at(aodcalojetindex) >=  tag_minTA     &&
+       Shifted_CaloJetAlphaMax.at(aodcalojetindex)              <=  tag_maxAmax   && 
+       Shifted_CaloJetAlphaMax.at(aodcalojetindex)              >=  0.0  )
+    {
+     taglist.push_back(aodcalojetindex);
+    }
+  }
+  if(aodcalojet_L1PF_list.size()>0) return taglist;
+  else {taglist.push_back(-1);      return taglist;}
+}
 
 bool analyzer_createobjects::AL_SG(int i){
   if(Shifted_CaloJetAlphaMax.at(i)<tag_maxAmax) return true;
@@ -107,7 +121,6 @@ bool analyzer_createobjects::AL_SG(int i){
 }
 
 bool analyzer_createobjects::AL_SB(int i){
-  //if(Shifted_CaloJetAlphaMax.at(i) < 0.95 && Shifted_CaloJetAlphaMax.at(i)>tag_maxAmax) return true;
   if(Shifted_CaloJetAlphaMax.at(i)>tag_maxAmax) return true;
   else return false;
 }
@@ -123,7 +136,6 @@ bool analyzer_createobjects::IP_SG(int i){
 }
 
 bool analyzer_createobjects::IP_SB(int i){
-  //if(Shifted_CaloJetMedianLog10IPSig.at(i) > 0.5 && Shifted_CaloJetMedianLog10IPSig.at(i) < tag_minIPsig) return true;
   if(Shifted_CaloJetMedianLog10IPSig.at(i) < tag_minIPsig) return true;
   else return false;
 }
@@ -154,7 +166,6 @@ bool analyzer_createobjects::TA_SG(int i){
 }
 
 bool analyzer_createobjects::TA_SB(int i){
-  //if(Shifted_CaloJetMedianLog10TrackAngle.at(i) > -2.25 && Shifted_CaloJetMedianLog10TrackAngle.at(i) < tag_minTA) return true;
   if(Shifted_CaloJetMedianLog10TrackAngle.at(i) < tag_minTA) return true;
   else return false;
 }
@@ -354,24 +365,6 @@ std::vector<int> analyzer_createobjects::jet_passTaggerSBIPc( ) {
 }
 
 
-
-std::vector<int> analyzer_createobjects::jet_passTagger_L1PF( ) {
-
-  std::vector<int> taglist;
-
-  for(int i=0; i<aodcalojet_L1PF_list.size(); ++i){
-   int aodcalojetindex = aodcalojet_L1PF_list[i];
-   if( Shifted_CaloJetMedianLog10IPSig.at(aodcalojetindex)      >  tag_minIPsig  &&
-       Shifted_CaloJetMedianLog10TrackAngle.at(aodcalojetindex) >  tag_minTA     &&
-       Shifted_CaloJetAlphaMax.at(aodcalojetindex)              <  tag_maxAmax  )
-    {
-     taglist.push_back(aodcalojetindex);
-    }
-  }
-  if(aodcalojet_L1PF_list.size()>0) return taglist;
-  else {taglist.push_back(-1);      return taglist;}
-}
-
 //-------------------------jet_minDR
 // Finds Delta R of closest "good" jet
 std::vector<float> analyzer_createobjects::jet_minDR( ) {
@@ -403,34 +396,17 @@ std::vector<int> analyzer_createobjects::jet_passID( int bitnr, TString jettype,
 
   std::vector<int> jetlist;
 
-  // set parameters based on jet collection
   int njets;
-  if(jettype.EqualTo("calo")){
-   njets = AODnCaloJet;
-  }
-//  if(jettype.EqualTo("pf")){
-//   njets = AODnPFJet;
-//  }
-//  if(jettype.EqualTo("pfchs")){
-//   njets = AODnPFchsJet;
-//  }
-
+  njets = AODnCaloJet;
   for(int i = 0; i < njets; i++)
   {
-
-   float jetpt;
-   float jeteta;
-   float jetphi;
-   if(jettype.EqualTo("calo")){
-    jetpt  = AODCaloJetPt->at(i) ;
-    jeteta = AODCaloJetEta->at(i);
-    jetphi = AODCaloJetPhi->at(i);
-   }
+   float  jetpt  = AODCaloJetPt->at(i) ;
+   float  jeteta = AODCaloJetEta->at(i);
+   float  jetphi = AODCaloJetPhi->at(i);
    bool pass_overlap = true;
    //check overlap with electrons
    if(electron_list.size()>0){
     for(int d=0; d<electron_list.size(); ++d){
-     //printf(" brgin looping over electrons\n");
      int eleindex = electron_list[d];
      if( dR( AOD_eleEta->at(eleindex), AOD_elePhi->at(eleindex), jeteta, jetphi ) < objcleandRcut )
      {
@@ -442,12 +418,11 @@ std::vector<int> analyzer_createobjects::jet_passID( int bitnr, TString jettype,
    if(muon_list.size()>0){
     for(int d=0; d<muon_list.size(); ++d){
      int muindex = muon_list[d];
-     if(muindex<= (AOD_muEta->size()-1)&&muindex<= (AOD_muPhi->size()-1)){
+     //if(muindex<= (AOD_muEta->size()-1)&&muindex<= (AOD_muPhi->size()-1)){ ******CHECK_ME******
       if( dR( AOD_muEta->at(muindex),AOD_muPhi->at(muindex), jeteta, jetphi ) < objcleandRcut )
       {
        pass_overlap=false; //printf(" OL w muon\n");
       } // if overlap     }
-     }
     }//end muons
    } // if muons
 
@@ -455,7 +430,6 @@ std::vector<int> analyzer_createobjects::jet_passID( int bitnr, TString jettype,
    bool pass_kin = jetpt > jetPtCut && ( fabs(jeteta) < jetEtaCut ) ;
    bool HEMFailure = false; //part of the HEM failure of 2018
    if( ( jetphi >= -1.57 && jetphi <= -0.87 ) && ( jeteta <= -1.3 && jeteta >= -3.0 ) ) HEMFailure=true;
-   //std::cout<<"Eta: "<<jeteta<<"  Phi: "<<jetphi <<" HEMFailure?: "<<HEMFailure<<std::endl;
 
    if( pass_kin && pass_overlap/* && !HEMFailure*/ )
    {

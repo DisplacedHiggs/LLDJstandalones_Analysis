@@ -189,8 +189,6 @@ public :
  TH1F*  h_TTOCMuE_EleEta           [SELBINNAMESIZE];
  TH1F*  h_TTOCMuE_MuEta            [SELBINNAMESIZE];
  TH2F*  h_TTOCMuEEta               [SELBINNAMESIZE];
-// TH1F*  h_TTOCPhoPt                [SELBINNAMESIZE];
-// TH1F*  h_TTOCPhoEta               [SELBINNAMESIZE];
  
  //--Double Muon
  TH1F*  h_TTOC_Mu17Mu8_DMu1Pt        [SELBINNAMESIZE];
@@ -211,15 +209,6 @@ public :
  TH1F*  h_TTOCTriggerNoDZTkMu2Eta  [SELBINNAMESIZE];
  TH1F*  h_TTOCTriggerNoDZTkMu1Pt   [SELBINNAMESIZE];
  TH1F*  h_TTOCTriggerNoDZTkMu2Pt   [SELBINNAMESIZE];
-// //--Single Muon
-// TH1F*  h_TTOCTrigger22MuEta       [SELBINNAMESIZE];
-// TH1F*  h_TTOCTrigger22MuPt        [SELBINNAMESIZE];
-// TH1F*  h_TTOCTrigger22TkMuEta     [SELBINNAMESIZE];
-// TH1F*  h_TTOCTrigger22TkMuPt      [SELBINNAMESIZE];
-// TH1F*  h_TTOCTrigger24MuEta       [SELBINNAMESIZE];
-// TH1F*  h_TTOCTrigger24MuPt        [SELBINNAMESIZE];
-// TH1F*  h_TTOCTrigger24TkMuEta     [SELBINNAMESIZE];
-// TH1F*  h_TTOCTrigger24TkMuPt      [SELBINNAMESIZE];
  
 //Double Electron
  TH1F*  h_TTOC_Ele23Ele12_DEle1Eta    [SELBINNAMESIZE];
@@ -232,11 +221,6 @@ public :
  TH1F*  h_TTOCTrigger17DEle2Eta    [SELBINNAMESIZE];
  TH1F*  h_TTOCTrigger17DEle1Pt     [SELBINNAMESIZE];
  TH1F*  h_TTOCTrigger17DEle2Pt     [SELBINNAMESIZE];
-// //Single Electron
-// TH1F*  h_TTOCTrigger23EleEta      [SELBINNAMESIZE];
-// TH1F*  h_TTOCTrigger23ElePt       [SELBINNAMESIZE];
-// TH1F*  h_TTOCTrigger27EleEta      [SELBINNAMESIZE];
-// TH1F*  h_TTOCTrigger27ElePt       [SELBINNAMESIZE];
  //--EMu
  TH1F*  h_TTOC_Ele23Mu12_EMu_ElePt     [SELBINNAMESIZE];
  TH1F*  h_TTOC_Ele23Mu12_EMu_MuPt      [SELBINNAMESIZE];
@@ -363,8 +347,6 @@ public :
  TH1F*  h_nSelectedAODCaloJetTagSB3_2b   [SELBINNAMESIZE];
  TH1F*  h_nCaloJet                       [SELBINNAMESIZE]; // AODnCaloJet; 
  TH1F*  h_nCaloJet_L1PF                  [SELBINNAMESIZE]; // AODnCaloJet_L1PF; 
-// TH1F*  h_nPFJet                         [SELBINNAMESIZE]; // AODnPFJet; 
-// TH1F*  h_nPFchsJet                      [SELBINNAMESIZE]; // AODnPFchsJet; 
 
  // AODCaloJetBasicHistograms
  TH1F*  h_AODCaloJetPt                             [SELBINNAMESIZE][JETMULTNAMESIZE];
@@ -386,8 +368,6 @@ public :
  TH1F*  h_AODCaloJetMedianLog10TrackAngle          [SELBINNAMESIZE][JETMULTNAMESIZE];
  TH1F*  h_AODCaloJetTotalTrackAngle                [SELBINNAMESIZE][JETMULTNAMESIZE];
  TH1F*  h_AODCaloJetMinDR                          [SELBINNAMESIZE][JETMULTNAMESIZE];
-// TH1F*  h_AODCaloJetCSV                            [SELBINNAMESIZE][JETMULTNAMESIZE];
-// TH1F*  h_AODCaloJetPartonFlavour                  [SELBINNAMESIZE][JETMULTNAMESIZE];
  TH1F*  h_AODCaloJetAbsEta                         [SELBINNAMESIZE][JETMULTNAMESIZE];
  TH2F*  h_AODCaloJetPtVarAbsEtaVar                 [SELBINNAMESIZE][JETMULTNAMESIZE];
  TH2F*  h_AODCaloJetEtaVsPhi                       [SELBINNAMESIZE][JETMULTNAMESIZE];
@@ -395,7 +375,6 @@ public :
  
  // AODCaloJetL1PFHistograms
  TH1F*  h_AODCaloJet_L1PFPt                             [SELBINNAMESIZE][JETMULTNAMESIZE];
- //TH1F*  h_AODCaloJet_L1PFPtVar                          [SELBINNAMESIZE][JETMULTNAMESIZE];
  //TH1F*  h_AODCaloJet_L1PFEta                            [SELBINNAMESIZE][JETMULTNAMESIZE];
  //TH1F*  h_AODCaloJet_L1PFPhi                            [SELBINNAMESIZE][JETMULTNAMESIZE];
  TH1F*  h_AODCaloJet_L1PFAlphaMax                       [SELBINNAMESIZE][JETMULTNAMESIZE];
@@ -447,8 +426,6 @@ public :
  TH1F*  h_AODCaloJetPt_Tag0                       [SELBINNAMESIZE][TAGMULTNAMESIZE];
  TH1F*  h_AODCaloJetPtVar_Tag0                    [SELBINNAMESIZE][TAGMULTNAMESIZE];
  TH1F*  h_AODCaloJetMinDR_Tag0                    [SELBINNAMESIZE][TAGMULTNAMESIZE];
-// TH1F*  h_AODCaloJetCSV_Tag0                      [SELBINNAMESIZE][TAGMULTNAMESIZE];
-// TH1F*  h_AODCaloJetPartonFlavour_Tag0            [SELBINNAMESIZE][TAGMULTNAMESIZE];
  TH1F*  h_AODCaloJetAbsEta_Tag0                   [SELBINNAMESIZE][TAGMULTNAMESIZE];
  TH1F*  h_AODCaloJetNCleanMatchedTracks_Tag0      [SELBINNAMESIZE][TAGMULTNAMESIZE];
  TH2F*  h_AODCaloJetPtVarAbsEtaVar_Tag0           [SELBINNAMESIZE][TAGMULTNAMESIZE];
