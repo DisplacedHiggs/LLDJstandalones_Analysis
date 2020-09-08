@@ -4,15 +4,15 @@ echo "TEST"
 voms-proxy-info --all
 ls -l
 echo "DONE"
-outDir="root://cmseos.fnal.gov//store/group/lpchbb/LLDJntuples/2018_LLDJ_V2p0_ctauReweight_test_2/"
+outDir="root://cmseos.fnal.gov//store/group/lpchbb/LLDJntuples/2018_LLDJ_V3p0/SignalSplit/"
 #outDir="root://cmseos.fnal.gov//store/group/lpchbb/LLDJntuples/2017_ctauReweightTest/"
 #outDir="root://cmseos.fnal.gov//store/group/lpchbb/LLDJntuples/2018_ctauReweightTest/"
 echo output directory, $outDir
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-export SCRAM_ARCH=slc6_amd64_gcc530
+export SCRAM_ARCH=slc7_amd64_gcc700
 tar -zxvf cms_setup.tar.gz
-cd CMSSW_8_1_0/src
+cd CMSSW_10_6_4/src
 eval `scram runtime -sh`
 cp ../../SignalSplit.exe .
 cp ../../*.list .
@@ -24,8 +24,10 @@ ls
 echo "doing ls ../../"
 ls ../../
 echo "now run"
-
+echo ./SignalSplit.exe --input_list=$1 --name=$2
 ./SignalSplit.exe --input_list=$1 --name=$2
+echo "after run ls"
+ls
 
 for FILE in *.root
 do

@@ -11,6 +11,7 @@
 
 void SampleSplit::Loop()
 { 
+std::cout<<"Starting"<<std::endl;
    if (fChain == 0) return;
    //--Instantiate roots
      TFile *ifile             = new TFile(SampleName+".root","recreate");//"update");
@@ -57,4 +58,5 @@ void SampleSplit::Loop()
         delete file;
       }
    }//for jentry
+std::cout<<"Ending"<<std::endl;
 }
