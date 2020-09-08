@@ -81,7 +81,11 @@ public :
    ULong64_t       AOD_HLT_Mu17Mu8;
    ULong64_t       AOD_HLT_Mu17Mu8_Mass8;
    ULong64_t       AOD_HLT_Mu17Mu8_Mass3p8;
+   ULong64_t       AOD_HLT_Mu17TkMu8;
+   ULong64_t       AOD_HLT_TkMu17TkMu8;
    ULong64_t       AOD_HLT_Mu17Mu8_noDZ;
+   ULong64_t       AOD_HLT_Mu17TkMu8_noDZ;
+   ULong64_t       AOD_HLT_TkMu17TkMu8_noDZ;
    ULong64_t       AOD_HLT_Mu8Ele23_DZ;
    ULong64_t       AOD_HLT_Mu8Ele23_noDZ;
    ULong64_t       AOD_HLT_Mu23Ele12_DZ;
@@ -94,7 +98,11 @@ public :
    ULong64_t       AOD_HLT_Mu17Mu8_isPS;
    ULong64_t       AOD_HLT_Mu17Mu8_Mass8_isPS;
    ULong64_t       AOD_HLT_Mu17Mu8_Mass3p8_isPS;
+   ULong64_t       AOD_HLT_Mu17TkMu8_isPS;
+   ULong64_t       AOD_HLT_TkMu17TkMu8_isPS;
    ULong64_t       AOD_HLT_Mu17Mu8_noDZ_isPS;
+   ULong64_t       AOD_HLT_Mu17TkMu8_noDZ_isPS;
+   ULong64_t       AOD_HLT_TkMu17TkMu8_noDZ_isPS;
    ULong64_t       AOD_HLT_Mu8Ele23_DZ_isPS;
    ULong64_t       AOD_HLT_Mu8Ele23_noDZ_isPS;
    ULong64_t       AOD_HLT_Mu23Ele12_DZ_isPS;
@@ -111,6 +119,8 @@ public :
    std::vector<float>   *AODCaloJetEta;
    std::vector<float>   *AODCaloJetPhi;
    std::vector<bool>    *AODCaloJetID;
+   std::vector<float>   *AODCaloJet_emEnergyFraction;
+   std::vector<float>   *AODCaloJet_energyFractionHadronic;
    std::vector<float>   *AODCaloJetMass;
    std::vector<float>   *AODCaloJetArea;
    std::vector<float>   *AODCaloJetPileup;
@@ -251,7 +261,11 @@ public :
    TBranch        *b_AOD_HLT_Mu17Mu8;   //!
    TBranch        *b_AOD_HLT_Mu17Mu8_Mass8;   //!
    TBranch        *b_AOD_HLT_Mu17Mu8_Mass3p8;   //!
+   TBranch        *b_AOD_HLT_Mu17TkMu8;   //!
+   TBranch        *b_AOD_HLT_TkMu17TkMu8;   //!
    TBranch        *b_AOD_HLT_Mu17Mu8_noDZ;   //!
+   TBranch        *b_AOD_HLT_Mu17TkMu8_noDZ;   //!
+   TBranch        *b_AOD_HLT_TkMu17TkMu8_noDZ;   //!
    TBranch        *b_AOD_HLT_Mu8Ele23_DZ;   //!
    TBranch        *b_AOD_HLT_Mu8Ele23_noDZ;   //!
    TBranch        *b_AOD_HLT_Mu23Ele12_DZ;   //!
@@ -264,7 +278,11 @@ public :
    TBranch        *b_AOD_HLT_Mu17Mu8_isPS;   //!
    TBranch        *b_AOD_HLT_Mu17Mu8_Mass8_isPS;   //!
    TBranch        *b_AOD_HLT_Mu17Mu8_Mass3p8_isPS;   //!
+   TBranch        *b_AOD_HLT_Mu17TkMu8_isPS;   //!
+   TBranch        *b_AOD_HLT_TkMu17TkMu8_isPS;   //!
    TBranch        *b_AOD_HLT_Mu17Mu8_noDZ_isPS;   //!
+   TBranch        *b_AOD_HLT_Mu17TkMu8_noDZ_isPS;   //!
+   TBranch        *b_AOD_HLT_TkMu17TkMu8_noDZ_isPS;   //!
    TBranch        *b_AOD_HLT_Mu8Ele23_DZ_isPS;   //!
    TBranch        *b_AOD_HLT_Mu8Ele23_noDZ_isPS;   //!
    TBranch        *b_AOD_HLT_Mu23Ele12_DZ_isPS;   //!
@@ -281,6 +299,8 @@ public :
    TBranch        *b_AODCaloJetEta;   //!
    TBranch        *b_AODCaloJetPhi;   //!
    TBranch        *b_AODCaloJetID;   //!
+   TBranch        *b_AODCaloJet_emEnergyFraction;   //!
+   TBranch        *b_AODCaloJet_energyFractionHadronic;   //!
    TBranch        *b_AODCaloJetMass;   //!
    TBranch        *b_AODCaloJetArea;   //!
    TBranch        *b_AODCaloJetPileup;   //!
@@ -365,6 +385,7 @@ public :
    TBranch        *b_AOD_CaloMET_pt;   //!
    TBranch        *b_AOD_CaloMET_phi;   //!
 
+
    SampleSplit(TTree *tree=0);
    virtual ~SampleSplit();
    virtual Int_t    Cut(Long64_t entry);
@@ -447,7 +468,7 @@ void SampleSplit::Init(TTree *tree)
    // Set object pointer
    AODBunchXing = 0;
    AODnPU = 0;
-   AODnPUmean = 0; 
+   AODnPUmean = 0;
    model = 0;
    llpId = 0;
    llpStatus = 0;
@@ -483,6 +504,8 @@ void SampleSplit::Init(TTree *tree)
    AODCaloJetEta = 0;
    AODCaloJetPhi = 0;
    AODCaloJetID = 0;
+   AODCaloJet_emEnergyFraction = 0;
+   AODCaloJet_energyFractionHadronic = 0;
    AODCaloJetMass = 0;
    AODCaloJetArea = 0;
    AODCaloJetPileup = 0;
@@ -622,7 +645,11 @@ void SampleSplit::Init(TTree *tree)
    fChain->SetBranchAddress("AOD_HLT_Mu17Mu8", &AOD_HLT_Mu17Mu8, &b_AOD_HLT_Mu17Mu8);
    fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_Mass8", &AOD_HLT_Mu17Mu8_Mass8, &b_AOD_HLT_Mu17Mu8_Mass8);
    fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_Mass3p8", &AOD_HLT_Mu17Mu8_Mass3p8, &b_AOD_HLT_Mu17Mu8_Mass3p8);
+   fChain->SetBranchAddress("AOD_HLT_Mu17TkMu8", &AOD_HLT_Mu17TkMu8, &b_AOD_HLT_Mu17TkMu8);
+   fChain->SetBranchAddress("AOD_HLT_TkMu17TkMu8", &AOD_HLT_TkMu17TkMu8, &b_AOD_HLT_TkMu17TkMu8);
    fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_noDZ", &AOD_HLT_Mu17Mu8_noDZ, &b_AOD_HLT_Mu17Mu8_noDZ);
+   fChain->SetBranchAddress("AOD_HLT_Mu17TkMu8_noDZ", &AOD_HLT_Mu17TkMu8_noDZ, &b_AOD_HLT_Mu17TkMu8_noDZ);
+   fChain->SetBranchAddress("AOD_HLT_TkMu17TkMu8_noDZ", &AOD_HLT_TkMu17TkMu8_noDZ, &b_AOD_HLT_TkMu17TkMu8_noDZ);
    fChain->SetBranchAddress("AOD_HLT_Mu8Ele23_DZ", &AOD_HLT_Mu8Ele23_DZ, &b_AOD_HLT_Mu8Ele23_DZ);
    fChain->SetBranchAddress("AOD_HLT_Mu8Ele23_noDZ", &AOD_HLT_Mu8Ele23_noDZ, &b_AOD_HLT_Mu8Ele23_noDZ);
    fChain->SetBranchAddress("AOD_HLT_Mu23Ele12_DZ", &AOD_HLT_Mu23Ele12_DZ, &b_AOD_HLT_Mu23Ele12_DZ);
@@ -635,7 +662,11 @@ void SampleSplit::Init(TTree *tree)
    fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_isPS", &AOD_HLT_Mu17Mu8_isPS, &b_AOD_HLT_Mu17Mu8_isPS);
    fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_Mass8_isPS", &AOD_HLT_Mu17Mu8_Mass8_isPS, &b_AOD_HLT_Mu17Mu8_Mass8_isPS);
    fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_Mass3p8_isPS", &AOD_HLT_Mu17Mu8_Mass3p8_isPS, &b_AOD_HLT_Mu17Mu8_Mass3p8_isPS);
+   fChain->SetBranchAddress("AOD_HLT_Mu17TkMu8_isPS", &AOD_HLT_Mu17TkMu8_isPS, &b_AOD_HLT_Mu17TkMu8_isPS);
+   fChain->SetBranchAddress("AOD_HLT_TkMu17TkMu8_isPS", &AOD_HLT_TkMu17TkMu8_isPS, &b_AOD_HLT_TkMu17TkMu8_isPS);
    fChain->SetBranchAddress("AOD_HLT_Mu17Mu8_noDZ_isPS", &AOD_HLT_Mu17Mu8_noDZ_isPS, &b_AOD_HLT_Mu17Mu8_noDZ_isPS);
+   fChain->SetBranchAddress("AOD_HLT_Mu17TkMu8_noDZ_isPS", &AOD_HLT_Mu17TkMu8_noDZ_isPS, &b_AOD_HLT_Mu17TkMu8_noDZ_isPS);
+   fChain->SetBranchAddress("AOD_HLT_TkMu17TkMu8_noDZ_isPS", &AOD_HLT_TkMu17TkMu8_noDZ_isPS, &b_AOD_HLT_TkMu17TkMu8_noDZ_isPS);
    fChain->SetBranchAddress("AOD_HLT_Mu8Ele23_DZ_isPS", &AOD_HLT_Mu8Ele23_DZ_isPS, &b_AOD_HLT_Mu8Ele23_DZ_isPS);
    fChain->SetBranchAddress("AOD_HLT_Mu8Ele23_noDZ_isPS", &AOD_HLT_Mu8Ele23_noDZ_isPS, &b_AOD_HLT_Mu8Ele23_noDZ_isPS);
    fChain->SetBranchAddress("AOD_HLT_Mu23Ele12_DZ_isPS", &AOD_HLT_Mu23Ele12_DZ_isPS, &b_AOD_HLT_Mu23Ele12_DZ_isPS);
@@ -652,6 +683,8 @@ void SampleSplit::Init(TTree *tree)
    fChain->SetBranchAddress("AODCaloJetEta", &AODCaloJetEta, &b_AODCaloJetEta);
    fChain->SetBranchAddress("AODCaloJetPhi", &AODCaloJetPhi, &b_AODCaloJetPhi);
    fChain->SetBranchAddress("AODCaloJetID", &AODCaloJetID, &b_AODCaloJetID);
+   fChain->SetBranchAddress("AODCaloJet_emEnergyFraction", &AODCaloJet_emEnergyFraction, &b_AODCaloJet_emEnergyFraction);
+   fChain->SetBranchAddress("AODCaloJet_energyFractionHadronic", &AODCaloJet_energyFractionHadronic, &b_AODCaloJet_energyFractionHadronic);
    fChain->SetBranchAddress("AODCaloJetMass", &AODCaloJetMass, &b_AODCaloJetMass);
    fChain->SetBranchAddress("AODCaloJetArea", &AODCaloJetArea, &b_AODCaloJetArea);
    fChain->SetBranchAddress("AODCaloJetPileup", &AODCaloJetPileup, &b_AODCaloJetPileup);
