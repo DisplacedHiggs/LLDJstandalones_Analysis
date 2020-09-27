@@ -18,8 +18,8 @@ analyzer_loop::~analyzer_loop()
 
 void analyzer_loop::Loop(TString outfilename, 
                        Float_t lumi, Float_t nrEvents,
-                       Float_t crossSec, Float_t avgTTSF,
-                       Int_t nevts, TFile *optfile, TFile *NM1file, TString uncbin)
+                       Float_t crossSec,
+                       Int_t nevts, TFile *optfile, TString uncbin)
 {
 
 
@@ -37,6 +37,7 @@ void analyzer_loop::Loop(TString outfilename,
  clearglobalcounters();
 
  if(isMC) loadPUWeight();
+ if(isMC) loadElectronReco();
  if(isMC) loadElectronWeight( eleid );
  if(isMC) loadMuonWeight( muoid );
  if(isMC) loadMuonIso( muoid );
@@ -55,22 +56,14 @@ void analyzer_loop::Loop(TString outfilename,
   L1PFremoved=kFALSE;
   cleareventcounters();
 
-  if( uncbin.EqualTo("") ){
-   optfile->cd();
-   clearOPTtree(); 
-   clearOPTCRHeavytree(); 
-   clearOPTCRLighttree(); 
-   clearOPTMuZHtree(); 
-   clearOPTEleZHtree(); 
-  }
-  if( uncbin.EqualTo("") ){
-   NM1file->cd();
-   clearNM1tree(); 
-   clearNM1CRHeavytree(); 
-   clearNM1CRLighttree(); 
-   clearNM1MuZHtree(); 
-   clearNM1EleZHtree(); 
-  }
+//  if( uncbin.EqualTo("") ){
+//   optfile->cd();
+//   clearOPTtree(); 
+//   clearOPTCRHeavytree(); 
+//   clearOPTCRLighttree(); 
+//   clearOPTMuZHtree(); 
+//   clearOPTEleZHtree(); 
+//  }
 
   //printf(" Event %lld\n", event);
   Long64_t ientry = LoadTree(jentry);
@@ -83,15 +76,10 @@ void analyzer_loop::Loop(TString outfilename,
   sum_AODGenEventWeight+=AODGenEventWeight;
   h_sum_AODGenEventWeight->Fill(2, AODGenEventWeight);
   //h_sum_AOD0thnPU->Fill(AOD0thnPU);
-
-  // get lists of "good" electrons, photons, jets
-  // idbit, pt, eta, sysbinname
+  // get lists of "good" electrons, jets idbit, pt, eta, sysbinname
   electron_list    = electron_passID  ( eleidbit,        ele_minPt1, ele_minPt2, ele_maxEta, "");
-  photon_list      = photon_passID    ( pho_minPt, pho_maxEta, ""); 
-  muon_list        = muon_passID      ( mu_minPt1,  mu_minPt2,  mu_maxEta,  ""); 
+  muon_list        = muon_passID      ( muoidbit,        mu_minPt1,  mu_minPt2,  mu_maxEta,  ""); 
   aodcalojet_list  = jet_passID       ( aodcalojetidbit, "calo",  jet_minPt, jet_maxEta, "" ); 
-//  aodpfjet_list    = jet_passID       ( aodcalojetidbit, "pf",    jet_minPt, jet_maxEta, ""); 
-//  aodpfchsjet_list = jet_passID       ( aodcalojetidbit, "pfchs", jet_minPt, jet_maxEta, ""); 
   taggedjet_list   = jet_passTagger   ();
   taggedjetSB1_list   = jet_passTaggerSB1   ();
   taggedjetSB2_list   = jet_passTaggerSB2   ();
@@ -124,18 +112,13 @@ void analyzer_loop::Loop(TString outfilename,
     int jetindex = aodcalojet_list[i];
     if(AODCaloJetPt->at(jetindex)>100.0 && (fabs(AODCaloJetEta->at(jetindex))<3.0 && fabs(AODCaloJetEta->at(jetindex))>2.25)) pass_L1PF = false;
   }
-  for(int i=0; i<photon_list.size(); i++){
-    int phoindex = photon_list[i];
-    if(AOD_phoPt->at(phoindex)>50.0 && (fabs(AOD_phoEta->at(phoindex))<3.0 && fabs(AOD_phoEta->at(phoindex))>2.25)) pass_L1PF = false;
-  }
   // remove event from jet based tagging variables for comparisons
   if(!pass_L1PF){aodcalojet_L1PF_list.clear(); L1PFremoved = kTRUE;}
   taggedjet_list_L1PF = jet_passTagger_L1PF ();
 
   n_totalCalo        += aodcalojet_list.size()        ; 
-
   aodcalojet_minDR_list = jet_minDR();
-
+  
   // colisions happen @LHC at a given rate, use event_weight
   // to make the simulation match the rate seen in data
   // = lum * cross-section / nrEvents generated
@@ -145,27 +128,19 @@ void analyzer_loop::Loop(TString outfilename,
   if(isMC) PUweight_DoubleEG     = makePUWeight("DoubleEG"    ) ;
   if(isMC) PUweight_DoubleMu     = makePUWeight("DoubleMu"    ) ;
   if(isMC) PUweight_MuonEG       = makePUWeight("MuonEG"      ) ;
-  // electrons also have an associated scale factor for MC 
-//  if(isMC) event_weight *= makeTTWeight( avgTTSF );
 
   
-  
-
   base_weight = event_weight; ///.7323;
   ele_weight = 1.0;
   if(isMC) ele_weight  = makeElectronWeight( electron_list, eleID_Unc, eleID_ind);
-  if(isMC) mu_weight   = makeMuonWeight(muon_list, muonID_Unc, muonID_ind);//makeMuonWeight( muon_list );
-  //std::cout<<"EW:         "<<event_weight<<std::endl;
+  if(isMC) mu_weight   = makeMuonWeight(muon_list, muonID_Unc, muonID_ind);
   if(isMC) event_weight *= ctauEventWeight;
   if(isMC){ 
-  w_eleID   = ele_weight;
-  w_muonID  = mu_weight;
-  w_muonISO = makeMuonIso(muon_list, muonISO_Unc, muonISO_ind);
-	}
-  //std::cout<<"ctauWeight: "<<ctauEventWeight<<std::endl;
-  //std::cout<<"EW:         "<<event_weight<<std::endl;
-  //std::cout<<std::endl;
-//  getMET();
+    w_eleReco = makeElectronReco(electron_list, eleReco_Unc, eleReco_ind);
+    w_eleID   = ele_weight;
+    w_muonID  = mu_weight;
+    w_muonISO = makeMuonIso(muon_list, muonISO_Unc, muonISO_ind);
+  }
 
   calculateHT();
 
@@ -174,14 +149,16 @@ void analyzer_loop::Loop(TString outfilename,
   // set booleans if pass selections 
   passOSSF = (dilep_mass>20.);
   passOSOF = (OSOF_mass>20.);
-  passPTOSOF = (OSOF_pt>100.);
-  passPTOSOFL = (OSOF_pt>10. && OSOF_pt<100.);
-  passZWindow = (dilep_mass>70. && dilep_mass<110.);
-  passZWinOSOF= (OSOF_mass>70. && OSOF_mass<110.);
+  passPTOSOF     = (OSOF_pt>dilepPt_split);
+  passPTOSOFL    = (OSOF_pt>dilepPt_min && OSOF_pt<dilepPt_split);
 
-  passPTOSSF     = (dilep_pt>=100.);
-  passPTOSSFL    = (dilep_pt>=10. && dilep_pt<100.);
-  passPTOSSFL_2  = (dilep_pt>=10.);
+  passPTOSSF     = (dilep_pt>=dilepPt_split);
+  passPTOSSFL    = (dilep_pt>=dilepPt_min && dilep_pt<dilepPt_split);
+  passPTOSSFL_2  = (dilep_pt>=dilepPt_min);
+
+  passZWindow = (dilep_mass>ZMass_min && dilep_mass<ZMass_max);
+  passZWinOSOF= (OSOF_mass >ZMass_min && OSOF_mass <ZMass_max);
+
 
   passGoodVtx = AODnGoodVtx>0; 
   passOneJet  = false; if (aodcalojet_list.size()>0) passOneJet=true;  
@@ -193,7 +170,6 @@ void analyzer_loop::Loop(TString outfilename,
   passDoubleEle = askPassDoubleEle();
   passDoubleMu  = askPassDoubleMu();
   passMuEG      = askPassMuEG();
-  passSinglePho = askPassSinglePho();
 
   // clear then reset selection vectors
   clearSelections();
@@ -220,7 +196,6 @@ void analyzer_loop::Loop(TString outfilename,
   bitsPassOneMuNoPair  = setSelBits( selvecOneMuNoPair  , n_passOneMuNoPair  );   
   bitsPassEleMuOSOF    = setSelBits( selvecEleMuOSOF    , n_passEleMuOSOF    );   
   bitsPassEleMuOSOFL   = setSelBits( selvecEleMuOSOFL   , n_passEleMuOSOFL   );   
-  bitsPassOnePho       = setSelBits( selvecOnePho       , n_passOnePho       );
 
   keyPassOneEleSig    = setSelKey( selvecOneEleSig    ); 
   keyPassTwoEleSig    = setSelKey( selvecTwoEleSig    ); 
@@ -242,7 +217,6 @@ void analyzer_loop::Loop(TString outfilename,
   keyPassOneMuNoPair  = setSelKey( selvecOneMuNoPair  ); 
   keyPassEleMuOSOF    = setSelKey( selvecEleMuOSOF    ); 
   keyPassEleMuOSOFL   = setSelKey( selvecEleMuOSOFL   ); 
-  keyPassOnePho       = setSelKey( selvecOnePho       ); 
 
   //debug_printbitset(); // this is a big printout
   //debug_printbitkeys(); // this is a big printout
@@ -267,8 +241,7 @@ void analyzer_loop::Loop(TString outfilename,
   selvec[16] = bitsPassOneEleNoPair ; 
   selvec[17] = bitsPassOneMuNoPair  ; 
   selvec[18] = bitsPassEleMuOSOF    ; 
-  selvec[19] = bitsPassOnePho       ; 
-  selvec[20] = bitsPassEleMuOSOFL   ; 
+  selvec[19] = bitsPassEleMuOSOFL   ; 
 
   selkey[0]  = keyPassOneEleSig    ; 
   selkey[1]  = keyPassTwoEleSig    ; 
@@ -289,8 +262,7 @@ void analyzer_loop::Loop(TString outfilename,
   selkey[16] = keyPassOneEleNoPair ; 
   selkey[17] = keyPassOneMuNoPair  ; 
   selkey[18] = keyPassEleMuOSOF    ; 
-  selkey[19] = keyPassOnePho       ; 
-  selkey[20] = keyPassEleMuOSOFL   ; 
+  selkey[19] = keyPassEleMuOSOFL   ; 
 
   dofillselbin[0]  = ( ( bitsPassOneEleSig    >> 0) &1) ; 
   dofillselbin[1]  = ( ( bitsPassTwoEleSig    >> 0) &1) ; 
@@ -311,46 +283,48 @@ void analyzer_loop::Loop(TString outfilename,
   dofillselbin[16] = ( ( bitsPassOneEleNoPair >> 0) &1) ; 
   dofillselbin[17] = ( ( bitsPassOneMuNoPair  >> 0) &1) ; 
   dofillselbin[18] = ( ( bitsPassEleMuOSOF    >> 0) &1) ; 
-  dofillselbin[19] = ( ( bitsPassOnePho       >> 0) &1) ; 
-  dofillselbin[20] = ( ( bitsPassEleMuOSOFL   >> 0) &1) ; 
+  dofillselbin[19] = ( ( bitsPassEleMuOSOFL   >> 0) &1) ; 
 
   if ( (( bitsPassTwoMuOffZ      >> 0) &1) ){PU_weight = PUweight_DoubleMu; } 
   if ( (( bitsPassTwoEleOffZ     >> 0) &1) ){PU_weight = PUweight_DoubleEG; }
   // fill the histograms
   for(unsigned int i=0; i<selbinnames.size(); ++i){
-  //if(!isMC && run>=319077){/*std::cout<<"HEM Failure, run: "<<run<<std::endl;*/ continue;} // skips HEM Failure, saves prior to problem
-//  if(!isMC && run<319077 && run>0){/*std::cout<<"Before HEM Failure, run: "<<run<<std::endl;*/ continue;} //skips Before HEM Failure, saves HEM Failure
-	w_LeptonSF=1.;
+    //if(!isMC && run>=319077){/*std::cout<<"HEM Failure, run: "<<run<<std::endl;*/ continue;} // skips HEM Failure, saves prior to problem
+    //if(!isMC && run<319077 && run>0){/*std::cout<<"Before HEM Failure, run: "<<run<<std::endl;*/ continue;} //skips Before HEM Failure, saves HEM Failure
+    w_LeptonSF=1.;
    if(isMC){
-     if(i==19) fullweight = event_weight;
      if(i==0||i==1||i==4||i==5||i==8||i==9||i==12||i==13)  
 	{
 	fullweight = event_weight*PUweight_DoubleEG;  	
-	w_LeptonSF = w_eleID;
-	LeptonSF_Unc = eleID_Unc;
+	w_LeptonSF = w_eleReco;
+	w_LeptonSF *= w_eleID;
+	ESF_Unc = TMath::Sqrt(eleID_Unc*eleID_Unc+eleReco_Unc*eleReco_Unc);	
 	}
      if(i==2||i==3||i==6||i==7||i==10||i==11||i==14||i==15||i==17) 
 	{
 	fullweight = event_weight*PUweight_DoubleMu;    
 	w_LeptonSF=w_muonID;
 	w_LeptonSF*=w_muonISO; 
-	LeptonSF_Unc = TMath::Sqrt(muonID_Unc*muonID_Unc+muonISO_Unc*muonISO_Unc);	
+	MSF_Unc = TMath::Sqrt(muonID_Unc*muonID_Unc+muonISO_Unc*muonISO_Unc);	
 	}
-     if(i==18||i==20) 
+     if(i==18||i==19) 
 	{
 	fullweight = event_weight * PUweight_MuonEG; 
-	w_LeptonSF=w_eleID*w_muonID*w_muonISO; 
-	LeptonSF_Unc = TMath::Sqrt(eleID_Unc*eleID_Unc+muonID_Unc*muonID_Unc+muonISO_Unc*muonISO_Unc);
+	w_LeptonSF=w_eleReco*w_eleID*w_muonID*w_muonISO; 
+	ESF_Unc = TMath::Sqrt(eleID_Unc*eleID_Unc+eleReco_Unc*eleReco_Unc);	
+	MSF_Unc = TMath::Sqrt(muonID_Unc*muonID_Unc+muonISO_Unc*muonISO_Unc);	
 	}
-     if(uncbin.Contains("LeptonSFUp")){w_LeptonSF += LeptonSF_Unc; fullweight*=w_LeptonSF;}
-     else if(uncbin.Contains("LeptonSFDown")){w_LeptonSF -= LeptonSF_Unc; fullweight*=w_LeptonSF;}
-     else {fullweight*=w_LeptonSF;}
+     if(uncbin.Contains("ESFUp")){w_LeptonSF += ESF_Unc;}
+     if(uncbin.Contains("ESFDown")){w_LeptonSF -= ESF_Unc;}
+     if(uncbin.Contains("MSFUp")){w_LeptonSF += MSF_Unc;}
+     if(uncbin.Contains("MSFDown")){w_LeptonSF -=MSF_Unc;}
+     fullweight*=w_LeptonSF;
    }
    else{
      fullweight = event_weight;
    }
    /// quick hack to only write phase spaces we care about
-   if(i==1 || i==3 || i==5 || i==7 || i==9 || i==11 || i==13 || i==15 || i==18 || i==19 || i==20 ){
+   if(i==1 || i==3 || i==5 || i==7 || i==9 || i==11 || i==13 || i==15 || i==18 || i==19 ){
     fillCutflowHistograms( fullweight, i, selvec[i], selkey[i] );
     if( dofillselbin[i] ){
      fillSelectedHistograms( fullweight, i );
@@ -373,56 +347,17 @@ void analyzer_loop::Loop(TString outfilename,
   } // for(unsigned int i=0; i<selbinnames.size(); ++i){
 
   // tagging variable optimization tree
-  if( ( (( bitsPassTwoMuOffZ      >> 0) &1) || (( bitsPassTwoEleOffZ      >> 0) &1))  && uncbin.EqualTo("") ){// TwoMuZH or TwoEleZH 
-   optfile->cd();
-   setOPTtree(); 
-   OPTtree->Fill();
-  }
-  // tagging variable NMinus1 tree
-  if( ( ( bitsPassTwoMuDY      >> 0) &1) && uncbin.EqualTo("") ){// General Purpose: TwoMuDY
-   NM1file->cd();
-   setNM1tree(); 
-   NM1tree->Fill();
-  }
-  
-  if( ( ( bitsPassEleMuOSOF    >> 0) &1) && uncbin.EqualTo("") ){// CRHeavy
-   optfile->cd();          
-   setOPTCRHeavytree();    
-   OPTCRHeavytree->Fill();
-   
-   NM1file->cd();
-   setNM1CRHeavytree(); 
-   NM1CRHeavytree->Fill();
-  }
-  if( ( ( bitsPassOnePho       >> 0) &1) && uncbin.EqualTo("") ){// CRLight
-   optfile->cd(); 
-   setOPTCRLighttree();   
-   OPTCRLighttree->Fill(); 
-   
-   NM1file->cd();
-   setNM1CRLighttree(); 
-   NM1CRLighttree->Fill();
-  }
-  if( ( ( bitsPassTwoMuZH      >> 0) &1) && uncbin.EqualTo("") ){// TwoMuZH
-   optfile->cd();   
-   setOPTMuZHtree();   
-   OPTMuZHtree->Fill();
-   
-   NM1file->cd();
-   setNM1MuZHtree(); 
-   NM1MuZHtree->Fill();
-  }
-  if( ( ( bitsPassTwoEleZH     >> 0) &1) && uncbin.EqualTo("") ){// TwoEleZH
-   optfile->cd(); 
-   setOPTEleZHtree(); 
-   OPTEleZHtree->Fill();
-   
-   NM1file->cd();
-   setNM1EleZHtree(); 
-   NM1EleZHtree->Fill();
-  }
-
+/////  if( ( (( bitsPassTwoMuOffZ      >> 0) &1) || (( bitsPassTwoEleOffZ      >> 0) &1))  && uncbin.EqualTo("") ){// TwoMuZH or TwoEleZH 
+/////   optfile->cd();
+/////   setOPTtree(); 
+/////   OPTtree->Fill();
+/////  }
   //debug_printobjects();   // helpful printout (turn off when submitting!!!)
+
+  //Print objects in backgroundMC with >=2 tags
+  //if(taggedjet_list.size()>=2 && isMC && !outfilename.Contains("HToSS")) debug_printobjects();
+  //printf("make log: %0.i\n",makelog);
+  
  } // end loop over entries
 
  std::cout << std::endl;
@@ -451,9 +386,9 @@ void analyzer_loop::Loop(TString outfilename,
  std::cout<<" n_passOneMuNoPair  " << setw(width) << left << n_passOneMuNoPair  << setw(width) << left << (float) n_passOneMuNoPair / (float) n_tot << std::endl;   
  std::cout<<" n_passEleMuOSOF    " << setw(width) << left << n_passEleMuOSOF    << setw(width) << left << (float) n_passEleMuOSOF   / (float) n_tot << std::endl;   
  std::cout<<" n_passEleMuOSOFL   " << setw(width) << left << n_passEleMuOSOFL   << setw(width) << left << (float) n_passEleMuOSOFL  / (float) n_tot << std::endl;   
- std::cout<<" n_passOnePho       " << setw(width) << left << n_passOnePho       << setw(width) << left << (float) n_passOnePho      / (float) n_tot << std::endl;   
  std::cout<<std::endl;
 
+ std::cout<<" Jet Matching "<<std::endl;
  std::cout<<"  n_totalCalo        "<< n_totalCalo        <<std::endl;
  std::cout<<std::endl<<std::endl;
 
@@ -472,280 +407,35 @@ void analyzer_loop::Loop(TString outfilename,
  if( uncbin.EqualTo("") ){
   optfile->cd();
   OPTtree->CloneTree()->Write();
-  OPTCRHeavytree->CloneTree()->Write();
-  OPTCRLighttree->CloneTree()->Write();
-  OPTMuZHtree->CloneTree()->Write();
-  OPTEleZHtree->CloneTree()->Write();
   optfile->Close();
  }
 
- if( uncbin.EqualTo("") ){
-  NM1file->cd();
-  NM1tree->CloneTree()->Write();
-  NM1CRHeavytree->CloneTree()->Write();
-  NM1CRLighttree->CloneTree()->Write();
-  NM1MuZHtree->CloneTree()->Write();
-  NM1EleZHtree->CloneTree()->Write();
-  NM1file->Close();
- }
 
  // make outfile and save histograms
  // write the histograms
  for(unsigned int i=0; i<selbinnames.size(); ++i){
-  if(i==1 || i==3 || i==5 || i==7 || i==9 || i==11 || i==13 || i==15 || i==18 || i==19 || i==20  ){
-
-     //Normalize variable binned histograms by bin width
-     //Could put this in its own loop for clarity
+  if(i==1 || i==3 || i==5 || i==7 || i==9 || i==11 || i==13 || i==15 || i==18 || i==19 ){
+    //Normalize variable binned histograms by bin width
+    //Could put this in its own loop for clarity
     //scaleVariableBinHistograms( i ); //broken
-     
-     writeSelectedHistograms( i );
-     writeCutflowHistograms( i );
+    
+    writeSelectedHistograms( i );
+    writeCutflowHistograms( i );
 
-     //jet
-     if(jetMultOn){
-     for( unsigned int k=0; k<jetmultnames.size(); ++k){
-       writeSelectedJetHistograms( i, k );
-     } }
-     else{
-     writeSelectedJetHistograms( i, (jetmultnames.size()-1));
-     }
+    //jet
+    if(jetMultOn){
+    for( unsigned int k=0; k<jetmultnames.size(); ++k){
+      writeSelectedJetHistograms( i, k );
+    } }
+    else{
+    writeSelectedJetHistograms( i, (jetmultnames.size()-1));
+    }
 
-     //tag
-     for( unsigned int k=0; k<tagmultnames.size(); ++k){
-       writeSelectedTagHistograms( i, k );
-     }
-
+    //tag
+    for( unsigned int k=0; k<tagmultnames.size(); ++k){
+      writeSelectedTagHistograms( i, k );
+    }
   } 
  } // if i== one of the phase spaces we want to write
 } // end analyzer_loop::Loop()
-
-
-void analyzer_loop::debug_printobjects(){
-
-  printf("\n Event %lld\n", event);
-  printf(" Pass ossf %d zwind %d ptg50 %d 1jet %d vtx %d \n", passOSSF, passZWindow, passPTOSSF, passOneJet, passGoodVtx);
-
-  //debug_printbitset();
-  debug_printphotons();
-  debug_printmuons();
-  debug_printelectrons();
-
-  printf(" Pass SingleEle: %d SingleMu: %d\n", passSingleEle, passSingleMu);
-
-  debug_printdilep();
-  debug_printjets();
-
-  std::cout << endl;
-  std::cout << "*******************PRE-ID PRINT******************" << std::endl;
-  std::cout << "Electrons pt eta phi charge" << std::endl;
-  for(int i=0; i<AOD_eleEta->size(); i++){
-    std::cout << AOD_elePt->at(i) << " " << AOD_eleEta->at(i) << " " << AOD_elePhi->at(i) << " " << AOD_eleCharge->at(i) << std::endl;
-  }
-  std::cout << "Muon pt eta phi" << std::endl;
-  for(int i=0; i<AOD_muEta->size(); i++){
-    std::cout << AOD_muPt->at(i) << " " << AOD_muEta->at(i) << " " << AOD_muPhi->at(i) << " " << AOD_muCharge->at(i) << std::endl;
-  }
-  std::cout << "Photon pt eta phi" << std::endl;
-  for(int i=0; i<AOD_phoEta->size(); i++){
-    std::cout << AOD_phoPt->at(i) << " " << AOD_phoEta->at(i) << " " << AOD_phoPhi->at(i) << std::endl;
-  }
-  std::cout << "AODCaloJet pt eta phi" << std::endl;
-  for(int i=0; i<AODCaloJetEta->size(); i++){
-    std::cout << AODCaloJetPt->at(i) << " " << AODCaloJetEta->at(i) << " " << AODCaloJetPhi->at(i) << std::endl;
-  }
-
-
-  return;
-
- }
-
-void analyzer_loop::debug_printmuons()
-{
-
- // muon debug
-  for(int i=0; i<muon_list.size(); ++i){
-   int muindex = muon_list[i];
-   printf( " muon %d : pt %.1f eta %.1f phi %.1f\n", i, AOD_muPt->at(muindex), AOD_muEta->at(muindex), AOD_muPhi->at(muindex));
-
-   //printf(" muonid %d    %d %d %d %d %d \n",i
-   //      ,muIDbit->at(i) >> 0 & 0x1 
-   //      ,muIDbit->at(i) >> 1 & 0x1 
-   //      ,muIDbit->at(i) >> 2 & 0x1 
-   //      ,muIDbit->at(i) >> 3 & 0x1 
-   //      ,muIDbit->at(i) >> 4 & 0x1 
-   //      );       
-  }
- return;
-}
-
-void analyzer_loop::debug_printelectrons()
-{
-  for(int i=0; i<electron_list.size(); ++i){
-   int eleindex = electron_list[i];
-   printf( " electron %d : pt %.1f eta %.1f phi %.1f\n", i, AOD_elePt->at(eleindex), AOD_eleEta->at(eleindex), AOD_elePhi->at(eleindex));
-  }
- return;
-}
-
-
-void analyzer_loop::debug_printdilep()
-{
-  if(dilep_mass>0.){
-   printf(" DILEP FOUND\n");
-   printf("  l1 pt %.1f  eta %.1f  phi %.1f  mass %.1f \n",
-     fourVec_l1.Pt(), fourVec_l1.Eta(), fourVec_l1.Phi(), fourVec_l1.M() );
-   printf("  l2 pt %.1f  eta %.1f  phi %.1f  mass %.1f \n",
-     fourVec_l2.Pt(), fourVec_l2.Eta(), fourVec_l2.Phi(), fourVec_l2.M() );
-   printf("  ll pt %.1f  eta %.1f  phi %.1f  mass %.1f \n",
-      fourVec_ll.Pt(), fourVec_ll.Eta(), fourVec_ll.Phi(), fourVec_ll.M() );
-  }
- return;
-}
-
-void analyzer_loop::debug_printphotons()
-{
-  for(int i=0; i<photon_list.size(); ++i){
-   int phoindex = photon_list[i];
-   printf( " photon %d : pt %.1f eta %.1f phi %.1f\n", i, AOD_phoPt->at(phoindex), AOD_phoEta->at(phoindex), AOD_phoPhi->at(phoindex));
-  }
- return;
-}
-
-void analyzer_loop::debug_printjets()
-{
-  for(int i=0; i<aodcalojet_list.size(); ++i){
-   int jetindex = aodcalojet_list[i];
-   printf( " jet %d : pt %.1f eta %.1f phi %.1f\n", i, AODCaloJetPt->at(jetindex), AODCaloJetEta->at(jetindex), AODCaloJetPhi->at(jetindex));
-   printf( "  tagvars amax %.1f TA %.1f IP %.1f\n",  AODCaloJetAlphaMax->at(jetindex), AODCaloJetMedianLog10TrackAngle->at(jetindex), AODCaloJetMedianLog10IPSig->at(jetindex));
-  }
-
-  for(int i=0; i<taggedjet_list.size(); ++i){
-   int jetindex = taggedjet_list[i];
-   printf( " TAGGED JET\n");
-   printf( " jet %d : pt %.1f eta %.1f phi %.1f\n", i, AODCaloJetPt->at(jetindex), AODCaloJetEta->at(jetindex), AODCaloJetPhi->at(jetindex));
-   printf( "  tagvars amax %.1f TA %.1f IP %.1f\n", AODCaloJetAlphaMax->at(jetindex), AODCaloJetMedianLog10TrackAngle->at(jetindex), AODCaloJetMedianLog10IPSig->at(jetindex));
-  }
-
- return;
-}
-
-
-void analyzer_loop::debug_printtriggers()
-{
-
-///// printf("AOD_HLT_Ele23Loose %llu \n", AOD_HLT_Ele23Loose) ;
-///// printf("AOD_HLT_Ele27Tight %llu \n", AOD_HLT_Ele27Tight) ;
-///// printf("AOD_HLT_Ele17Ele12 %llu \n", AOD_HLT_Ele17Ele12) ;
-///// printf("AOD_HLT_Ele23Ele12 %llu \n", AOD_HLT_Ele23Ele12) ;
-///// printf("AOD_HLT_IsoMu22    %llu \n", AOD_HLT_IsoMu22   ) ;
-///// printf("AOD_HLT_IsoTkMu22  %llu \n", AOD_HLT_IsoTkMu22 ) ;
-///// printf("AOD_HLT_Mu17Mu8    %llu \n", AOD_HLT_Mu17Mu8   ) ;
-///// printf("AOD_HLT_Mu17TkMu8  %llu \n", AOD_HLT_Mu17TkMu8 ) ;
- //printf("AOD_HLT_Mu8Ele23 %llu \n", AOD_HLT_Mu8Ele23) ;
- //printf("AOD_HLT_Mu23Ele12 %llu \n", AOD_HLT_Mu23Ele12) ;
- //printf("AOD_HLT_Mu12Ele23_DZ %llu \n", AOD_HLT_Mu12Ele23_DZ) ;
- //printf("AOD_HLT_Mu23Ele12_DZ %llu \n", AOD_HLT_Mu23Ele12_DZ) ;
- return;
-
-}
-
-void analyzer_loop::debug_printbitset()
-{
-
- std::cout<<" bitsPassOneEleSig    "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassOneEleSig    >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassTwoEleSig    "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassTwoEleSig    >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassOneMuSig     "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassOneMuSig     >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassTwoMuSig     "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassTwoMuSig     >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassOneEleDY     "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassOneEleDY     >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassTwoEleDY     "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassTwoEleDY     >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassOneMuDY      "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassOneMuDY      >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassTwoMuDY      "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassTwoMuDY      >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassOneEleZH     "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassOneEleZH     >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassTwoEleZH     "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassTwoEleZH     >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassOneMuZH      "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassOneMuZH      >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassTwoMuZH      "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassTwoMuZH      >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassOneEleOffZ   "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassOneEleOffZ   >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassTwoEleOffZ   "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassTwoEleOffZ   >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassOneMuOffZ    "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassOneMuOffZ    >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassTwoMuOffZ    "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassTwoMuOffZ    >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassOneEleNoPair "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassOneEleNoPair >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassOneMuNoPair  "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassOneMuNoPair  >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassEleMuOSOF    "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassEleMuOSOF    >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassEleMuOSOFL   "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassEleMuOSOFL   >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" bitsPassOnePho       "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( bitsPassOnePho       >>i)&1 ); } 
- std::cout<<std::endl;
-
- return;
-
-}
-
-
-void analyzer_loop::debug_printbitkeys()
-{
-
- std::cout<<" keyPassOneEleSig    "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassOneEleSig    >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassTwoEleSig    "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassTwoEleSig    >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassOneMuSig     "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassOneMuSig     >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassTwoMuSig     "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassTwoMuSig     >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassOneEleDY     "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassOneEleDY     >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassTwoEleDY     "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassTwoEleDY     >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassOneMuDY      "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassOneMuDY      >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassTwoMuDY      "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassTwoMuDY      >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassOneEleZH     "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassOneEleZH     >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassTwoEleZH     "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassTwoEleZH     >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassOneMuZH      "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassOneMuZH      >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassTwoMuZH      "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassTwoMuZH      >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassOneEleOffZ   "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassOneEleOffZ   >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassTwoEleOffZ   "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassTwoEleOffZ   >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassOneMuOffZ    "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassOneMuOffZ    >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassTwoMuOffZ    "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassTwoMuOffZ    >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassOneEleNoPair "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassOneEleNoPair >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassOneMuNoPair  "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassOneMuNoPair  >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassEleMuOSOF    "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassEleMuOSOF    >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassEleMuOSOFL   "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassEleMuOSOFL   >>i)&1 ); } 
- std::cout<<std::endl;
- std::cout<<" keyPassOnePho       "; for(unsigned int i=0; i<8; ++i){ std::cout<<( ( keyPassOnePho       >>i)&1 ); } 
- std::cout<<std::endl;
- return;
-
-}
 

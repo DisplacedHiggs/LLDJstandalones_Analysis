@@ -26,11 +26,10 @@ public :
    FILE * logfile;
    FILE * edmfile;
    Float_t event_weight;
-   Float_t w_eleID, w_muonID, w_muonISO, w_LeptonSF, w_Lumi, w_PU, w_GenEvent, w_other, w_tot = 1.;
+   Float_t w_eleReco, w_eleID, w_muonID, w_muonISO, w_LeptonSF, w_Lumi, w_PU, w_GenEvent, w_other, w_tot = 1.;
    Float_t PUweight_DoubleEG;
    Float_t PUweight_DoubleMu;
    Float_t PUweight_MuonEG;
-   Float_t PUweight_SinglePhoton;
    Float_t fullweight;
 
    //\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\//
@@ -41,33 +40,83 @@ public :
    Long64_t        event;
    Int_t           lumis;
    Bool_t          isData;
-   Int_t           AODnTruePU;
+   Float_t         AODGenEventWeight;
    Int_t           AODnVtx;
    Int_t           AODnGoodVtx;
    Int_t           AODnTrksPV;
    Bool_t          AODisPVGood;
-   Float_t         ctauEventWeight;
-   Float_t         AODGenEventWeight;
+   Float_t         AODfixedGridRhoFastjetAll;
+   Int_t           AODnBunchXing;
+   std::vector<int>     *AODBunchXing;
+   std::vector<int>     *AODnPU;
+   std::vector<float>   *AODnPUmean;
+   Int_t           AODnTruePU;
+   Int_t           AOD0thnPU;
+   TString         *model;
+   std::vector<int>     *llpId;
+   std::vector<int>     *llpStatus;
+   std::vector<float>   *llpPt;
+   std::vector<float>   *llpEta;
+   std::vector<float>   *llpPhi;
+   std::vector<float>   *llpMass;
+   std::vector<int>     *llpDaughterId;
+   std::vector<int>     *llpDaughterStatus;
+   std::vector<float>   *llpDaughterPt;
+   std::vector<float>   *llpDaughterEta;
+   std::vector<float>   *llpDaughterPhi;
+   std::vector<float>   *llpDaughterMass;
+   std::vector<float>   *llpvX;
+   std::vector<float>   *llpvY;
+   std::vector<float>   *llpvZ;
+   std::vector<float>   *llpDaughtervX;
+   std::vector<float>   *llpDaughtervY;
+   std::vector<float>   *llpDaughtervZ;
+   Float_t         gen_Z_mass;
+   Float_t         gen_Z_energy;
+   Float_t         gen_Z_pt;
+   Float_t         gen_Z_eta;
+   Float_t         gen_Z_phi;
+   Float_t         gen_Z_dauther1_Id;
+   Float_t         gen_Z_dauther2_Id;
+   std::vector<float>   *gen_lep_energy;
+   std::vector<float>   *gen_lep_pt;
+   std::vector<float>   *gen_lep_eta;
+   std::vector<float>   *gen_lep_phi;
+   std::vector<int>     *gen_lep_Id;
+   std::vector<int>     *gen_lep_momId;
+   std::vector<float>   *toppts;
+   Float_t   ctauEventWeight;
+   //ele ele
    ULong64_t       AOD_HLT_DoubleEle33;
    ULong64_t       AOD_HLT_Ele23Ele12;
    ULong64_t       AOD_HLT_Ele23Ele12_noDZ;
+   ULong64_t       AOD_HLT_DoubleEle33_isPS;
+   ULong64_t       AOD_HLT_Ele23Ele12_isPS;
+   ULong64_t       AOD_HLT_Ele23Ele12_noDZ_isPS;
+   //mu mu
    ULong64_t       AOD_HLT_Mu17Mu8;
+   ULong64_t       AOD_HLT_Mu17TkMu8;
+   ULong64_t       AOD_HLT_TkMu17TkMu8;
+   ULong64_t       AOD_HLT_Mu17Mu8_noDZ;
+   ULong64_t       AOD_HLT_Mu17TkMu8_noDZ;
+   ULong64_t       AOD_HLT_TkMu17TkMu8_noDZ;
    ULong64_t       AOD_HLT_Mu17Mu8_Mass8;
    ULong64_t       AOD_HLT_Mu17Mu8_Mass3p8;
-   ULong64_t       AOD_HLT_Mu17Mu8_noDZ;
+   ULong64_t       AOD_HLT_Mu17Mu8_isPS;
+   ULong64_t       AOD_HLT_Mu17Mu8_Mass8_isPS;
+   ULong64_t       AOD_HLT_Mu17Mu8_Mass3p8_isPS;
+   ULong64_t       AOD_HLT_Mu17Mu8_noDZ_isPS;
+   ULong64_t       AOD_HLT_Mu17TkMu8_isPS;
+   ULong64_t       AOD_HLT_TkMu17TkMu8_isPS;
+   ULong64_t       AOD_HLT_Mu17TkMu8_noDZ_isPS;
+   ULong64_t       AOD_HLT_TkMu17TkMu8_noDZ_isPS;
+   //mu ele
    ULong64_t       AOD_HLT_Mu8Ele23_DZ;
    ULong64_t       AOD_HLT_Mu8Ele23_noDZ;
    ULong64_t       AOD_HLT_Mu23Ele12_DZ;
    ULong64_t       AOD_HLT_Mu23Ele12_noDZ;
    ULong64_t       AOD_HLT_Mu12Ele23_DZ;
    ULong64_t       AOD_HLT_Mu12Ele23_noDZ;
-   ULong64_t       AOD_HLT_DoubleEle33_isPS;
-   ULong64_t       AOD_HLT_Ele23Ele12_isPS;
-   ULong64_t       AOD_HLT_Ele23Ele12_noDZ_isPS;
-   ULong64_t       AOD_HLT_Mu17Mu8_isPS;
-   ULong64_t       AOD_HLT_Mu17Mu8_Mass8_isPS;
-   ULong64_t       AOD_HLT_Mu17Mu8_Mass3p8_isPS;
-   ULong64_t       AOD_HLT_Mu17Mu8_noDZ_isPS;
    ULong64_t       AOD_HLT_Mu8Ele23_DZ_isPS;
    ULong64_t       AOD_HLT_Mu8Ele23_noDZ_isPS;
    ULong64_t       AOD_HLT_Mu23Ele12_DZ_isPS;
@@ -75,11 +124,20 @@ public :
    ULong64_t       AOD_HLT_Mu12Ele23_DZ_isPS;
    ULong64_t       AOD_HLT_Mu12Ele23_noDZ_isPS;
    Int_t           AODnCaloJet;
+   std::vector<float>   *AODCaloJetEnergy;
+   std::vector<float>   *AODCaloJetEnergyUncorrected;
    std::vector<float>   *AODCaloJetPt;
+   std::vector<float>   *AODCaloJetPtUncorrected;
    std::vector<float>   *AODCaloJetPt_JECUp;
    std::vector<float>   *AODCaloJetPt_JECDown;
    std::vector<float>   *AODCaloJetEta;
    std::vector<float>   *AODCaloJetPhi;
+   std::vector<bool>    *AODCaloJetID;
+   std::vector<float>   *AODCaloJet_emEnergyFraction;
+   std::vector<float>   *AODCaloJet_energyFractionHadronic;
+   std::vector<float>   *AODCaloJetMass;
+   std::vector<float>   *AODCaloJetArea;
+   std::vector<float>   *AODCaloJetPileup;
    std::vector<float>   *AODCaloJetAlphaMax;
    std::vector<float>   *AODCaloJetAlphaMax2;
    std::vector<float>   *AODCaloJetAlphaMaxPrime;
@@ -139,25 +197,17 @@ public :
    std::vector<float>   *AOD_muDxyErr;
    std::vector<float>   *AOD_muDB_BS2D;
    std::vector<float>   *AOD_muDB_PV2D;
-   Int_t           nAODPho;
-   std::vector<float>   *AOD_phoPt;
-   std::vector<float>   *AOD_phoEn;
-   std::vector<float>   *AOD_phoEta;
-   std::vector<float>   *AOD_phoPhi;
-   std::vector<float>   *AOD_phoSCEn;
-   std::vector<float>   *AOD_phoSCEta;
-   std::vector<float>   *AOD_phoSCPhi;
    Int_t           nAODEle;
    std::vector<float>   *AOD_elePt;
    std::vector<float>   *AOD_eleEn;
    std::vector<float>   *AOD_eleEta;
    std::vector<float>   *AOD_elePhi;
-   std::vector<float>   *AOD_eled0;
-   std::vector<float>   *AOD_eledz;
    std::vector<int>     *AOD_eleCharge;
    std::vector<int>     *AOD_eleChargeConsistent;
    std::vector<unsigned short> *AOD_eleIDbit;
    std::vector<int>     *AOD_elePassConversionVeto;
+   std::vector<float>        *AOD_eled0;
+   std::vector<float>        *AOD_eledz;
    Float_t         AOD_CaloMET_pt;
    Float_t         AOD_CaloMET_phi;
 
@@ -167,44 +217,102 @@ public :
    TBranch        *b_lumis;   //!
    TBranch        *b_isData;   //!
    TBranch        *b_AODnTruePU;   //!
+   TBranch        *b_AOD0thnPU;   //!
    TBranch        *b_AODnVtx;   //!
    TBranch        *b_AODnGoodVtx;   //!
    TBranch        *b_AODnTrksPV;   //!
    TBranch        *b_AODisPVGood;   //!
+   TBranch        *b_AODfixedGridRhoFastjetAll;
+   TBranch        *b_AODnBunchXing;
+   TBranch        *b_AODBunchXing;
+   TBranch        *b_AODnPU;
+   TBranch        *b_AODnPUmean; 
+   TBranch        *b_model;
+   TBranch        *b_llpId;
+   TBranch        *b_llpStatus;
+   TBranch        *b_llpPt;
+   TBranch        *b_llpEta;
+   TBranch        *b_llpPhi;
+   TBranch        *b_llpMass;
+   TBranch        *b_llpDaughterId;
+   TBranch        *b_llpDaughterStatus;
+   TBranch        *b_llpDaughterPt;
+   TBranch        *b_llpDaughterEta;
+   TBranch        *b_llpDaughterPhi;
+   TBranch        *b_llpDaughterMass;
+   TBranch        *b_llpvX;
+   TBranch        *b_llpvY;
+   TBranch        *b_llpvZ;
+   TBranch        *b_llpDaughtervX;
+   TBranch        *b_llpDaughtervY;
+   TBranch        *b_llpDaughtervZ;
+   TBranch        *b_gen_Z_mass;
+   TBranch        *b_gen_Z_energy;
+   TBranch        *b_gen_Z_pt;
+   TBranch        *b_gen_Z_eta;
+   TBranch        *b_gen_Z_phi;
+   TBranch        *b_gen_Z_dauther1_Id;
+   TBranch        *b_gen_Z_dauther2_Id;
+   TBranch        *b_gen_lep_energy;
+   TBranch        *b_gen_lep_pt;
+   TBranch        *b_gen_lep_eta;
+   TBranch        *b_gen_lep_phi;
+   TBranch        *b_gen_lep_Id;
+   TBranch        *b_gen_lep_momId;
+   TBranch        *b_toppts;   //!
    TBranch        *b_ctauEventWeight;   //!
-   TBranch        *b_AODGenEventWeight;   //!
-   TBranch        *b_AOD_HLT_DoubleEle33;   //!
-   TBranch        *b_AOD_HLT_Ele23Ele12;   //!
-   TBranch        *b_AOD_HLT_Ele23Ele12_noDZ;   //!
-   TBranch        *b_AOD_HLT_Mu17Mu8;   //!
-   TBranch        *b_AOD_HLT_Mu17Mu8_Mass8;   //!
-   TBranch        *b_AOD_HLT_Mu17Mu8_Mass3p8;   //!
-   TBranch        *b_AOD_HLT_Mu17Mu8_noDZ;   //!
-   TBranch        *b_AOD_HLT_Mu8Ele23_DZ;   //!
-   TBranch        *b_AOD_HLT_Mu8Ele23_noDZ;   //!
-   TBranch        *b_AOD_HLT_Mu23Ele12_DZ;   //!
-   TBranch        *b_AOD_HLT_Mu23Ele12_noDZ;   //!
-   TBranch        *b_AOD_HLT_Mu12Ele23_DZ;   //!
-   TBranch        *b_AOD_HLT_Mu12Ele23_noDZ;   //!
-   TBranch        *b_AOD_HLT_DoubleEle33_isPS;   //!
-   TBranch        *b_AOD_HLT_Ele23Ele12_isPS;   //!
-   TBranch        *b_AOD_HLT_Ele23Ele12_noDZ_isPS;   //!
-   TBranch        *b_AOD_HLT_Mu17Mu8_isPS;   //!
-   TBranch        *b_AOD_HLT_Mu17Mu8_Mass8_isPS;   //!
-   TBranch        *b_AOD_HLT_Mu17Mu8_Mass3p8_isPS;   //!
-   TBranch        *b_AOD_HLT_Mu17Mu8_noDZ_isPS;   //!
-   TBranch        *b_AOD_HLT_Mu8Ele23_DZ_isPS;   //!
-   TBranch        *b_AOD_HLT_Mu8Ele23_noDZ_isPS;   //!
-   TBranch        *b_AOD_HLT_Mu23Ele12_DZ_isPS;   //!
-   TBranch        *b_AOD_HLT_Mu23Ele12_noDZ_isPS;   //!
-   TBranch        *b_AOD_HLT_Mu12Ele23_DZ_isPS;   //!
-   TBranch        *b_AOD_HLT_Mu12Ele23_noDZ_isPS;   //!
+   //ele ele
+   TBranch        *b_AOD_HLT_DoubleEle33;
+   TBranch        *b_AOD_HLT_Ele23Ele12;
+   TBranch        *b_AOD_HLT_Ele23Ele12_noDZ;
+   TBranch        *b_AOD_HLT_DoubleEle33_isPS;
+   TBranch        *b_AOD_HLT_Ele23Ele12_isPS;
+   TBranch        *b_AOD_HLT_Ele23Ele12_noDZ_isPS;
+   //mu mu
+   TBranch        *b_AOD_HLT_Mu17Mu8;
+   TBranch        *b_AOD_HLT_Mu17TkMu8;
+   TBranch        *b_AOD_HLT_TkMu17TkMu8;
+   TBranch        *b_AOD_HLT_Mu17Mu8_noDZ;
+   TBranch        *b_AOD_HLT_Mu17TkMu8_noDZ;
+   TBranch        *b_AOD_HLT_TkMu17TkMu8_noDZ;
+   TBranch        *b_AOD_HLT_Mu17Mu8_Mass8;
+   TBranch        *b_AOD_HLT_Mu17Mu8_Mass3p8;
+   TBranch        *b_AOD_HLT_Mu17Mu8_isPS;
+   TBranch        *b_AOD_HLT_Mu17Mu8_Mass8_isPS;
+   TBranch        *b_AOD_HLT_Mu17Mu8_Mass3p8_isPS;
+   TBranch        *b_AOD_HLT_Mu17Mu8_noDZ_isPS;
+   TBranch        *b_AOD_HLT_Mu17TkMu8_isPS;
+   TBranch        *b_AOD_HLT_TkMu17TkMu8_isPS;
+   TBranch        *b_AOD_HLT_Mu17TkMu8_noDZ_isPS;
+   TBranch        *b_AOD_HLT_TkMu17TkMu8_noDZ_isPS;
+   //mu ele
+   TBranch        *b_AOD_HLT_Mu8Ele23_DZ;
+   TBranch        *b_AOD_HLT_Mu8Ele23_noDZ;
+   TBranch        *b_AOD_HLT_Mu23Ele12_DZ;
+   TBranch        *b_AOD_HLT_Mu23Ele12_noDZ;
+   TBranch        *b_AOD_HLT_Mu12Ele23_DZ;
+   TBranch        *b_AOD_HLT_Mu12Ele23_noDZ;
+   TBranch        *b_AOD_HLT_Mu8Ele23_DZ_isPS;
+   TBranch        *b_AOD_HLT_Mu8Ele23_noDZ_isPS;
+   TBranch        *b_AOD_HLT_Mu23Ele12_DZ_isPS;
+   TBranch        *b_AOD_HLT_Mu23Ele12_noDZ_isPS;
+   TBranch        *b_AOD_HLT_Mu12Ele23_DZ_isPS;
+   TBranch        *b_AOD_HLT_Mu12Ele23_noDZ_isPS;
    TBranch        *b_AODnCaloJet;   //!
+   TBranch        *b_AODCaloJetEnergy;
+   TBranch        *b_AODCaloJetEnergyUncorrected;
    TBranch        *b_AODCaloJetPt;   //!
-   TBranch        *b_AODCaloJetPt_JECUp;   //!
-   TBranch        *b_AODCaloJetPt_JECDown;   //!
+   TBranch        *b_AODCaloJetPtUncorrected;
+   TBranch        *b_AODCaloJetPt_JECUp;
+   TBranch        *b_AODCaloJetPt_JECDown;
    TBranch        *b_AODCaloJetEta;   //!
    TBranch        *b_AODCaloJetPhi;   //!
+   TBranch        *b_AODCaloJetMass;
+   TBranch        *b_AODCaloJetArea;
+   TBranch        *b_AODCaloJetPileup;
+   TBranch        *b_AODCaloJetID;   //!
+   TBranch        *b_AODCaloJet_emEnergyFraction;   //!
+   TBranch        *b_AODCaloJet_energyFractionHadronic;   //!
    TBranch        *b_AODCaloJetAlphaMax;   //!
    TBranch        *b_AODCaloJetAlphaMax2;   //!
    TBranch        *b_AODCaloJetAlphaMaxPrime;   //!
@@ -219,9 +327,9 @@ public :
    TBranch        *b_AODCaloJetLogTrackAngle;   //!
    TBranch        *b_AODCaloJetMedianLog10TrackAngle;   //!
    TBranch        *b_AODCaloJetTotalTrackAngle;   //!
-   TBranch        *b_AODCaloJetAvfVx;   //!
-   TBranch        *b_AODCaloJetAvfVy;   //!
-   TBranch        *b_AODCaloJetAvfVz;   //!
+   TBranch        *b_AODCaloJetAvfVx;
+   TBranch        *b_AODCaloJetAvfVy;
+   TBranch        *b_AODCaloJetAvfVz;
    TBranch        *b_AODCaloJetAvfVertexTotalChiSquared;   //!
    TBranch        *b_AODCaloJetAvfVertexDegreesOfFreedom;   //!
    TBranch        *b_AODCaloJetAvfVertexChi2NDoF;   //!
@@ -264,33 +372,25 @@ public :
    TBranch        *b_AOD_muDxyErr;   //!
    TBranch        *b_AOD_muDB_BS2D;   //!
    TBranch        *b_AOD_muDB_PV2D;   //!
-   TBranch        *b_nAODPho;   //!
-   TBranch        *b_AOD_phoPt;   //!
-   TBranch        *b_AOD_phoEn;   //!
-   TBranch        *b_AOD_phoEta;   //!
-   TBranch        *b_AOD_phoPhi;   //!
-   TBranch        *b_AOD_phoSCEn;   //!
-   TBranch        *b_AOD_phoSCEta;   //!
-   TBranch        *b_AOD_phoSCPhi;   //!
    TBranch        *b_nAODEle;   //!
    TBranch        *b_AOD_elePt;   //!
    TBranch        *b_AOD_eleEn;   //!
    TBranch        *b_AOD_eleEta;   //!
    TBranch        *b_AOD_elePhi;   //!
-   TBranch        *b_AOD_eled0;   //!
-   TBranch        *b_AOD_eledz;   //!
    TBranch        *b_AOD_eleCharge;   //!
    TBranch        *b_AOD_eleChargeConsistent;   //!
    TBranch        *b_AOD_eleIDbit;   //!
    TBranch        *b_AOD_elePassConversionVeto;   //!
+   TBranch        *b_AOD_eled0;   //!
+   TBranch        *b_AOD_eledz;   //!
    TBranch        *b_AOD_CaloMET_pt;   //!
    TBranch        *b_AOD_CaloMET_phi;   //!
-
+   TBranch        *b_AODGenEventWeight;   //!
 
    //analyzer_base(TTree *tree=0);
    analyzer_base();
    virtual ~analyzer_base();
-   virtual void     Init(TChain *tree, Bool_t isitMC, Bool_t domakelog, TString Tsample);
+   virtual void     Init(TChain *tree, Bool_t isitMC, Bool_t domakelog, TString Tsample, TString uncbin);
    virtual Long64_t LoadTree(Long64_t entry);
    
 };

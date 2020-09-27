@@ -10,23 +10,29 @@ analyzer_createobjects::~analyzer_createobjects()
 {
 }
 
+
+//----------------------------analyzer_createobjects
+
 //-------------------------muon_passID
-std::vector<int> analyzer_createobjects::muon_passID( Float_t muPtCut1, Float_t muPtCut2, Float_t muEtaCut, TString sysbinname)
-{
+std::vector<int> analyzer_createobjects::muon_passID( int bitnr, Float_t muPtCut1, Float_t muPtCut2, Float_t muEtaCut, TString sysbinname)
+{//------ btnr depricated can we remove?
  std::vector<int> mulist;
 
  for(int i = 0; i < AOD_muPt->size(); i++)
  {
+
   Float_t muonPt = getMuonPt(i,sysbinname);
   bool pass_kin = false;
   if( i==0 ) pass_kin = (muonPt > muPtCut1) && ( fabs(AOD_muEta->at(i)) < muEtaCut ) ;
   else       pass_kin = (muonPt > muPtCut2) && ( fabs(AOD_muEta->at(i)) < muEtaCut ) ;
 
-  bool pass_bit = false;
-  if (muoid == "Loose")  { muoisoval = 0.25 ; pass_bit = AOD_muPassLooseID->at(i);}
-  if (muoid == "Medium") { muoisoval = 0.25 ; pass_bit = AOD_muPassMediumGHID->at(i);}
-  if (muoid == "Tight")  { muoisoval = 0.15 ; pass_bit = AOD_muPassTightID->at(i);}
+  bool pass_bit = AOD_muPassLooseID->at(i);//------should probably make if/else groups for other ID's
+
+  if (muoid == "Loose")  muoisoval = 0.25 ;
+  if (muoid == "Medium") muoisoval = 0.25 ;
+  if (muoid == "Tight")  muoisoval = 0.15 ;
   bool pass_iso = AOD_muPFdBetaIsolation->at(i) < muoisoval ;
+
   if( pass_bit && pass_kin && pass_iso )
   {
    nSelectedMuo++;
@@ -39,30 +45,30 @@ std::vector<int> analyzer_createobjects::muon_passID( Float_t muPtCut1, Float_t 
 //-------------------------electron_passID
 std::vector<int> analyzer_createobjects::electron_passID( int bitnr, Float_t elePtCut1, Float_t elePtCut2, Float_t eleEtaCut, TString sysbinname)
 {
- std::vector<int> elelist;
 
- for(int i = 0; i < nAODEle; i++)
+ std::vector<int> elelist;
+ std::vector<int> elelist_preSort;
+ //Get List to Sort
+ for(int i = 0; i < nAODEle; i++) {elelist_preSort.push_back(i);} 
+ std::sort(elelist_preSort.begin(),elelist_preSort.end(),
+          [&]( int a, int b ) { return AOD_elePt->at(a) > AOD_elePt->at(b); });
+
+ //Loop overSortedList
+ for(int j = 0; j < elelist_preSort.size(); j++)
  {
+ int i = elelist_preSort[j]; 
+
   Float_t electronPt = getElectronPt(i,sysbinname);
 
   bool pass_kin = false;
   if( i==0 ) pass_kin =  (electronPt > elePtCut1) && ( fabs(AOD_eleEta->at(i)) < eleEtaCut ) ;
   else       pass_kin =  (electronPt > elePtCut2) && ( fabs(AOD_eleEta->at(i)) < eleEtaCut ) ;
 
-  bool pass_convsersion_veto = (AOD_elePassConversionVeto->at(i) > 0);
+  bool pass_convsersion_veto = (AOD_elePassConversionVeto->at(i) > 0); //could have been bool
 
   bool pass_bit = AOD_eleIDbit->at(i) >> bitnr & 0x1 == 1;
 
   bool pass_overlap = true;
-  //if(photon_list.size()>0){
-  // for(int d=0; d<photon_list.size(); ++d){
-  //  int phoindex = photon_list[d];
-  //  if(phoindex<= (AOD_phoEta->size()-1) && phoindex<= (AOD_phoPhi->size()-1)){
-  //   if( dR( AOD_phoEta->at(phoindex),AOD_phoPhi->at(phoindex), AOD_eleEta->at(i),AOD_elePhi->at(i) ) < objcleandRcut )  pass_overlap=false;
-  //  }
-  // }//end photons
-  //} // if photons
-
   bool pass_crack = (fabs(AOD_eleEta->at(i))<1.442) ||  (fabs(AOD_eleEta->at(i))>1.566);
 
   if( pass_bit && pass_kin && pass_overlap && pass_convsersion_veto && pass_crack )
@@ -71,9 +77,6 @@ std::vector<int> analyzer_createobjects::electron_passID( int bitnr, Float_t ele
    elelist.push_back(i);
   } // if pass_bit && pass_kin
  } // loop over electrons
-
-  std::sort(elelist.begin(),elelist.end(),
-           [&]( int a, int b ) { return AOD_elePt->at(a) > AOD_elePt->at(b); });
 
  return elelist;
 }
@@ -97,23 +100,6 @@ std::vector<int> analyzer_createobjects::jet_passTagger( ) {
   return taglist;
 }
 
-std::vector<int> analyzer_createobjects::jet_passTagger_L1PF( ) {
-
-  std::vector<int> taglist;
-
-  for(int i=0; i<aodcalojet_L1PF_list.size(); ++i){
-   int aodcalojetindex = aodcalojet_L1PF_list[i];
-   if( Shifted_CaloJetMedianLog10IPSig.at(aodcalojetindex)      >=  tag_minIPsig  &&
-       Shifted_CaloJetMedianLog10TrackAngle.at(aodcalojetindex) >=  tag_minTA     &&
-       Shifted_CaloJetAlphaMax.at(aodcalojetindex)              <=  tag_maxAmax   && 
-       Shifted_CaloJetAlphaMax.at(aodcalojetindex)              >=  0.0  )
-    {
-     taglist.push_back(aodcalojetindex);
-    }
-  }
-  if(aodcalojet_L1PF_list.size()>0) return taglist;
-  else {taglist.push_back(-1);      return taglist;}
-}
 
 bool analyzer_createobjects::AL_SG(int i){
   if(Shifted_CaloJetAlphaMax.at(i)<tag_maxAmax) return true;
@@ -365,6 +351,24 @@ std::vector<int> analyzer_createobjects::jet_passTaggerSBIPc( ) {
 }
 
 
+
+std::vector<int> analyzer_createobjects::jet_passTagger_L1PF( ) {
+
+  std::vector<int> taglist;
+
+  for(int i=0; i<aodcalojet_L1PF_list.size(); ++i){
+   int aodcalojetindex = aodcalojet_L1PF_list[i];
+   if( Shifted_CaloJetMedianLog10IPSig.at(aodcalojetindex)      >  tag_minIPsig  &&
+       Shifted_CaloJetMedianLog10TrackAngle.at(aodcalojetindex) >  tag_minTA     &&
+       Shifted_CaloJetAlphaMax.at(aodcalojetindex)              <  tag_maxAmax  )
+    {
+     taglist.push_back(aodcalojetindex);
+    }
+  }
+  if(aodcalojet_L1PF_list.size()>0) return taglist;
+  else {taglist.push_back(-1);      return taglist;}
+}
+
 //-------------------------jet_minDR
 // Finds Delta R of closest "good" jet
 std::vector<float> analyzer_createobjects::jet_minDR( ) {
@@ -391,18 +395,39 @@ std::vector<float> analyzer_createobjects::jet_minDR( ) {
   return minDR_list;
 }
 
+
 //-------------------------jet_passID
 std::vector<int> analyzer_createobjects::jet_passID( int bitnr, TString jettype, Float_t jetPtCut, Float_t jetEtaCut, TString sysbinname ) {
 
   std::vector<int> jetlist;
 
-  int njets;
-  njets = AODnCaloJet;
+  // set parameters based on jet collection
+  int njets = AODnCaloJet;
+  bool  passID;
+  float jetpt;
+  float jeteta;
+  float jetphi;
+  //float emEnergyFrac;
+  //float hadEnergyFrac;
+  //bool  ID;
   for(int i = 0; i < njets; i++)
   {
-   float  jetpt  = AODCaloJetPt->at(i) ;
-   float  jeteta = AODCaloJetEta->at(i);
-   float  jetphi = AODCaloJetPhi->at(i);
+   jetpt  = AODCaloJetPt ->at(i);
+   jeteta = AODCaloJetEta->at(i);
+   jetphi = AODCaloJetPhi->at(i);
+   passID = AODCaloJetID ->at(i);
+
+   //emEnergyFrac  = AODCaloJet_emEnergyFraction       ->at(i);
+   //hadEnergyFrac = AODCaloJet_energyFractionHadronic ->at(i);
+   //ID = false;
+   //if( emEnergyFrac  <=0.9
+   // && emEnergyFrac  >=0.0
+   // && hadEnergyFrac <=0.9
+   // && hadEnergyFrac >=0.0
+   // )   ID  = true;
+  
+   //if(ID!=passID) std::cout<< "Event: "<<event<<"   ,ID: "<<ID<<"   , passID: "<<passID<<"    ,njets: "<<njets <<std::endl;
+   if(!passID) continue;
    bool pass_overlap = true;
    //check overlap with electrons
    if(electron_list.size()>0){
@@ -418,20 +443,19 @@ std::vector<int> analyzer_createobjects::jet_passID( int bitnr, TString jettype,
    if(muon_list.size()>0){
     for(int d=0; d<muon_list.size(); ++d){
      int muindex = muon_list[d];
-     //if(muindex<= (AOD_muEta->size()-1)&&muindex<= (AOD_muPhi->size()-1)){ ******CHECK_ME******
+     if(muindex<= (AOD_muEta->size()-1)&&muindex<= (AOD_muPhi->size()-1)){
       if( dR( AOD_muEta->at(muindex),AOD_muPhi->at(muindex), jeteta, jetphi ) < objcleandRcut )
       {
        pass_overlap=false; //printf(" OL w muon\n");
       } // if overlap     }
+     }
     }//end muons
    } // if muons
 
-   // WHAT ABOUT JET ID?
    bool pass_kin = jetpt > jetPtCut && ( fabs(jeteta) < jetEtaCut ) ;
    bool HEMFailure = false; //part of the HEM failure of 2018
    if( ( jetphi >= -1.57 && jetphi <= -0.87 ) && ( jeteta <= -1.3 && jeteta >= -3.0 ) ) HEMFailure=true;
-
-   if( pass_kin && pass_overlap/* && !HEMFailure*/ )
+   if( pass_kin && pass_overlap && passID /*&& !HEMFailure*/ )
    {
     jetlist.push_back(i);
    } // if pass_bit && pass_kin
@@ -440,51 +464,6 @@ std::vector<int> analyzer_createobjects::jet_passID( int bitnr, TString jettype,
   return jetlist;
 
 }
-
-
-//-------------------------photon_passLooseID
-std::vector<int> analyzer_createobjects::photon_passID( Float_t AOD_phoPtCut, Float_t phoEtaCut, TString sysbinname){
-
- std::vector<int> pholist;
- pholist.clear();
- bool pass_overlap = true;
-// bool pass_noPixelSeed = true;
- ////Loop over photons
- for(int p=0;p<AOD_phoPt->size();p++)//<-----change from nPho until we get it
- {
-  Float_t theAOD_phoPt = getPhotonPt(p,sysbinname);
-
-  bool kinematic = theAOD_phoPt > AOD_phoPtCut && fabs((*AOD_phoEta)[p])<phoEtaCut;
-//  pass_noPixelSeed = !(bool)AOD_phoHasPixelSeed->at(p);
-
-   //check overlap with electrons
-   if(electron_list.size()>0){
-    for(int d=0; d<electron_list.size(); ++d){
-     //printf(" begin looping over electrons\n");
-     int eleindex = electron_list[d];
-     if( dR( AOD_phoEta->at(p),AOD_phoPhi->at(p), AOD_eleEta->at(eleindex),AOD_elePhi->at(eleindex) ) < objcleandRcut )
-     {
-      pass_overlap=false; // printf(" OL w electron\n");
-     } // if overlap
-    }//end electrons
-   } // if electrons
-
-
-
-//  bool pass_bit = AOD_phoIDbit->at(p) >> bitnr & 0x1 == 1; //phoIDbit->at(p) >> bitnr & 0x1 == 1;
-  //printf(" photon %i %i %i\n",p,bitnr,pass_bit);
-
-  if( kinematic && pass_overlap ){
-   nSelectedPho++;
-   //printf("selected aphoton\n");
-   pholist.push_back(p);
-  }
- }
-
- return pholist;
-
-}
-
 
 //-------------------------dR
 double analyzer_createobjects::dR(double eta1, double phi1, double eta2, double phi2)
@@ -546,32 +525,11 @@ Float_t analyzer_createobjects::getElectronPt(int i, TString sysbinname){
   }
 }
 
-//-------------------------getPhotonPt
-Float_t analyzer_createobjects::getPhotonPt(int idnr, TString sysbinname){
-
-  //BEN: Why not use standard pt and eta?
-
-  if(!isMC){ return AOD_phoSCEn->at(idnr)/TMath::CosH( (*AOD_phoSCEta)[idnr] ); }
-  else{
-    Float_t photonenergy = AOD_phoSCEn->at(idnr);
-    if(sysbinname=="_EGSUp"  ){ photonenergy*=(1. + 0.020); }
-    if(sysbinname=="_EGSDown"){ photonenergy*=(1. - 0.020); }
-
-    Float_t AOD_phoPt = photonenergy/TMath::CosH( (*AOD_phoSCEta)[idnr] );
-    return AOD_phoPt;
-  }
-}
-
 //-------------------------calculateHT
 void analyzer_createobjects::calculateHT(){
   // calculate ht
   htall  = 0.;
   htaodcalojets = 0.;
-
-  for(int i=0; i<photon_list.size(); ++i){
-   int phoindex = photon_list[i];
-   htall += Shifted_phoPt.at(phoindex);
-  }
 
   for(int i=0; i<electron_list.size(); ++i){
    int eleindex = electron_list[i];
@@ -727,7 +685,6 @@ void analyzer_createobjects::shiftCollections( TString uncbin )
 {
 
   Shifted_elePt                       .clear();
-  Shifted_phoPt                       .clear();
   Shifted_muPt                        .clear();
   Shifted_CaloJetPt                   .clear();
   Shifted_CaloJetAlphaMax             .clear();
@@ -737,9 +694,6 @@ void analyzer_createobjects::shiftCollections( TString uncbin )
   //Objects: do shift inside get function
   for(unsigned int i=0; i<AOD_elePt->size(); ++i){
     Shifted_elePt.push_back( getElectronPt(i,uncbin) );
-  }
-  for(unsigned int i=0; i<AOD_phoPt->size(); ++i){
-    Shifted_phoPt.push_back( getPhotonPt(i,uncbin) );
   }
   for(unsigned int i=0; i<AOD_muPt->size(); ++i){
     Shifted_muPt.push_back( getMuonPt(i,uncbin) );
@@ -812,20 +766,8 @@ void analyzer_createobjects::shiftCollections( TString uncbin )
 	Shifted_CaloJetMedianLog10TrackAngle.at(i) = Shifted_CaloJetMedianLog10TrackAngle.at(i) * (1+deltaTA) ;
       }
     }
-
-    //   std::cout<<" shifted"<<std::endl;
-    //   for(unsigned int i=0; i<Shifted_CaloJetAlphaMax.size(); ++i){
-    //    std::cout<<" Amax:  "<<Shifted_CaloJetAlphaMax.at(i)<<
-    //               " IPsig: "<<Shifted_CaloJetMedianLog10IPSig.at(i)<<
-    //               " TA:    "<<Shifted_CaloJetMedianLog10TrackAngle.at(i)<<
-    //    std::endl;
-    //   }
-    //   std::cout<<" deltaAmax  "<< deltaAmax  <<std::endl; // = (tag_shiftmaxAmax/tag_maxAmax) - 1.    ;
-    //   std::cout<<" deltaIPsig "<< deltaIPsig <<std::endl; // = (tag_shiftminIPsig/tag_minIPsig) - 1.  ;
-    //   std::cout<<" deltaTA    "<< deltaTA    <<std::endl; // = (tag_shiftminTA/tag_minTA) - 1.        ;
   }
 
   return;
 
 }
-

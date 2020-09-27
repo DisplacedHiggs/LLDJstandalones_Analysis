@@ -11,11 +11,12 @@ public :
 
                   analyzer_config();
    virtual        ~analyzer_config(); 
-   virtual void   setConfiguration();
+   virtual void   setConfiguration(TString year);
    //void           initSelectionCategories( TString selcategory );
    void           initSelectionCategories();
 
    std::vector<TFile*> hist_file_out;
+   TString analysisYear;
 
    // bin names
    std::vector<TString> selbinnames;
@@ -30,8 +31,6 @@ public :
    static const int TAGMULTNAMESIZE = 5;  
    static const int UNCBINNAMESIZE  = 3;
 
-   Float_t pho_minPt;
-   Float_t pho_maxEta;
    Float_t ele_minPt1;
    Float_t ele_minPt2;
    Float_t ele_maxEta;
@@ -40,6 +39,11 @@ public :
    Float_t mu_maxEta;
    Float_t jet_minPt;
    Float_t jet_maxEta;
+   Float_t dilepPt_min;
+   Float_t dilepPt_split;
+   Float_t ZMass_min;
+   Float_t ZMass_max;
+
 
    Float_t tag_minIPsig;
    Float_t tag_minTA;
@@ -48,8 +52,8 @@ public :
    Float_t tag_shiftminTA;
    Float_t tag_shiftmaxAmax;
    
-   static const Bool_t TTOC = kTRUE;        // loggit
-   //static const Bool_t TTOC = kFALSE;     // loggit
+   //static const Bool_t TTOC = kTRUE;        // loggit
+   static const Bool_t TTOC = kFALSE;     // loggit
    
    Bool_t doTTOC(); 
    

@@ -18,7 +18,6 @@ public :
    // each int is an entry in vector
    // associated with object passing
    // some selection
-   std::vector<int> photon_list;
    std::vector<int> electron_list;
    std::vector<int> muon_list ;
    std::vector<int> aodcalojet_list;
@@ -48,7 +47,6 @@ public :
    std::vector<int> taggedjetSBIPc_list;
 
    std::vector<float> aodcalojet_minDR_list;
-
    // for dilepton
    TLorentzVector fourVec_ee, fourVec_mm, fourVec_ll, fourVec_em;
    TLorentzVector fourVec_l1, fourVec_l2;
@@ -66,7 +64,6 @@ public :
    std::vector<float>   Shifted_CaloJetMedianLog10IPSig;
    std::vector<float>   Shifted_CaloJetMedianLog10TrackAngle;
    std::vector<float>   Shifted_muPt;
-   std::vector<float>   Shifted_phoPt;
    std::vector<float>   Shifted_elePt;
  
    // AOD
@@ -80,13 +77,12 @@ public :
    float PU_weight;
 
    // ID bits for collections
-   TString phoid;
    TString eleid;
    TString muoid;
    TString jetid;
 
-   int phoidbit;
    int eleidbit;
+   int muoidbit;
    int aodcalojetidbit;
    float muoisoval;
 
@@ -111,7 +107,6 @@ public :
    Int_t bitsPassOneMuNoPair ;
    Int_t bitsPassEleMuOSOF   ;
    Int_t bitsPassEleMuOSOFL  ;
-   Int_t bitsPassOnePho      ;
 
    // key all pass bitsets
    Int_t keyPassOneEleSig   ;
@@ -134,7 +129,6 @@ public :
    Int_t keyPassOneMuNoPair ;
    Int_t keyPassEleMuOSOF   ;
    Int_t keyPassEleMuOSOFL  ;
-   Int_t keyPassOnePho      ;
 
    // selection counters (how many events pass)
    Int_t n_tot;
@@ -159,9 +153,7 @@ public :
    Int_t n_passOneMuNoPair ;
    Int_t n_passEleMuOSOF   ;
    Int_t n_passEleMuOSOFL  ;
-   Int_t n_passOnePho      ;
 
-   Int_t nSelectedPho;
    Int_t nSelectedEle;
    Int_t nSelectedMuo;
    Int_t nSelectedSlimmedJet;

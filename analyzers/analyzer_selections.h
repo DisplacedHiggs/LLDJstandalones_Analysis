@@ -23,7 +23,6 @@ public :
    Bool_t        askPassDoubleEle();
    Bool_t        askPassDoubleMu();
    Bool_t        askPassMuEG();
-   Bool_t        askPassSinglePho();
 
    std::vector<Bool_t> selvecBaseSig    ;
    std::vector<Bool_t> selvecBaseZH     ;
@@ -51,7 +50,6 @@ public :
    std::vector<Bool_t> selvecOneMuNoPair  ; 
    std::vector<Bool_t> selvecEleMuOSOF    ; 
    std::vector<Bool_t> selvecEleMuOSOFL   ; 
-   std::vector<Bool_t> selvecOnePho       ; 
    Int_t selvec[SELBINNAMESIZE];
    Int_t selkey[SELBINNAMESIZE];
 
@@ -61,7 +59,6 @@ public :
    Bool_t passSingleMu  ;
    Bool_t passDoubleEle ;
    Bool_t passDoubleMu  ;
-   Bool_t passSinglePho ;
    Bool_t passMuEG ;
    Bool_t passOSSF      ;   
    Bool_t passOSOF      ;   
