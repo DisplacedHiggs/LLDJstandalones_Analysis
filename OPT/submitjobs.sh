@@ -5,7 +5,7 @@ c_ip=(0.5 0.75 0.9 1.0 1.15 1.25 1.5 1.75 2.0 2.5 2.75)
 c_ta=(-3.0 -2.5 -2.25 -2.10 -2.0 -1.9 -1.75 -1.5 -1.25 -1.0 -0.75)
 
 samples_16=( \ 
-# "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1000_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1000_OPTtree.root"   \
  "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-100_OPTtree.root"   \
  "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-10_OPTtree.root"   \
  "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1_OPTtree.root"   \
@@ -49,26 +49,26 @@ samples_16=( \
  "TTtoLfromTbar_OPTtree.root"   \
  "WGToLNuG_OPTtree.root"   \
  "WJetsToLNu_OPTtree.root"   \
-# "WWTo2L2Nu_OPTtree.root"   \
-# "WWToLNuQQ_OPTtree.root"   \
  "WW_OPTtree.root"   \
-# "WZTo1L3Nu_OPTtree.root"   \
-# "WZTo3LNu_OPTtree.root"   \
-# "WZToLNu2QorQQ2L_OPTtree.root"   \
  "WZ_OPTtree.root"   \
  "ZGTo2LG_OPTtree.root"   \
  "ZH_HToBB_ZToLL_OPTtree.root"   \
+ "ZZ_OPTtree.root"   \
+ "ggZH_HToBB_ZToLL_OPTtree.root"   \
+ #"mad_DYJetsToLL_M-50_OPTtree.root"  \
 # "ZZTo2L2Nu_OPTtree.root"   \
 # "ZZTo2L2Q_OPTtree.root"   \
 # "ZZTo2Q2Nu_OPTtree.root"   \
 # "ZZTo4L_OPTtree.root"   \
- "ZZ_OPTtree.root"   \
- "ggZH_HToBB_ZToLL_OPTtree.root"   \
- #"mad_DYJetsToLL_M-50_OPTtree.root"  \
+# "WZTo1L3Nu_OPTtree.root"   \
+# "WZTo3LNu_OPTtree.root"   \
+# "WZToLNu2QorQQ2L_OPTtree.root"   \
+# "WWTo2L2Nu_OPTtree.root"   \
+# "WWToLNuQQ_OPTtree.root"   \
 ) 
 
 samples_17=( \ 
-# "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1000_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1000_OPTtree.root"   \
  "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-100_OPTtree.root"   \
  "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-10_OPTtree.root"   \
  "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1_OPTtree.root"   \
@@ -118,7 +118,7 @@ samples_17=( \
 ) 
 
 samples_18=( \ 
-# "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1000_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1000_OPTtree.root"   \
  "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-100_OPTtree.root"   \
  "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-10_OPTtree.root"   \
  "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1_OPTtree.root"   \
@@ -154,11 +154,10 @@ samples_18=( \
  "ST_s-channel_4f_leptonDecays_OPTtree.root"   \
  "ST_t-channel_antitop_4f_inclusiveDecays_OPTtree.root"   \
  "ST_t-channel_top_4f_inclusiveDecays_OPTtree.root"   \
-# "ST_tW_antitop_5f_NoFullyHadronicDecays_OPTtree.root"   \
+ "ST_tW_antitop_5f_NoFullyHadronicDecays_OPTtree.root"   \
  "ST_tW_top_5f_NoFullyHadronicDecays_OPTtree.root"   \
  "TTJets_OPTtree.root"   \
  "TTtoLL_OPTtree.root"   \
- #"TTtoLL_mad_OPTtree.root"   \
  "WGToLNuG_OPTtree.root"   \
  "WJetsToLNu_OPTtree.root"   \
  "WW_OPTtree.root"   \
@@ -168,6 +167,7 @@ samples_18=( \
  "ZZ_OPTtree.root"   \
  "ggZH_HToBB_ZToLL_OPTtree.root"   \
  #"mad_DYJetsToLL_M-50_OPTtree.root"   \
+ #"TTtoLL_mad_OPTtree.root"   \
  #"mad_TTJets_OPTtree.root"   \
 ) 
 #make directories
@@ -178,7 +178,7 @@ mkdir -p err
 mkdir -p out
 mkdir -p log
 
-for y in {1..2} #Loop through years
+for y in {2..2} #Loop through years
 do
   #echo Year $y
   if [ $y == 0 ]

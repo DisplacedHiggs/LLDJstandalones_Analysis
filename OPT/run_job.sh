@@ -5,7 +5,8 @@ voms-proxy-info --all
 ls -l
 echo "DONE"
 
-outDir="root://cmseos.fnal.gov//store/user/ddiaz/OPT/Results_Sep2020/"
+#outDir="root://cmseos.fnal.gov//store/user/ddiaz/OPT/Results_Oct_1_2020/"
+outDir="root://cmseos.fnal.gov//store/user/ddiaz/OPT/Results_Oct_1_2020_2/"
 
 #export SCRAM_ARCH=slc6_amd64_gcc481; export CRAB_RUNTIME_TARBALL=local; export CRAB_TASKMANAGER_TARBALL=local; export _CONDOR_JOB_AD=Job.${1}.submit
 #export CRAB3_RUNTIME_DEBUG=True

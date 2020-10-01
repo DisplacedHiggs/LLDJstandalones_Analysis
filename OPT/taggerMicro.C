@@ -18,6 +18,46 @@
 
 using namespace std;
 
+float ZPtSF (float ZPt, TString year, TString sample){
+  float evt_wt = 1.0; 
+if( sample.Contains("DYJetsToLL") ){
+  if( year == "2016"){
+    //std::cout<<"Year: "<<year<<"  ZPt: "<<ZPt<<" evt_wt: "<<evt_wt<<std::endl;
+    if     (ZPt<10.)evt_wt*=1.05817;
+    else if(ZPt<20.)evt_wt*=0.994488;
+    else if(ZPt<30.)evt_wt*=0.930056;
+    else if(ZPt<40.)evt_wt*=0.925206;
+    else if(ZPt<50.)evt_wt*=0.946403;
+    else if(ZPt<60.)evt_wt*=0.962136;
+    else if(ZPt<70.)evt_wt*= 0.965316;
+    else if(ZPt<80.)evt_wt*=0.978209;
+    else if(ZPt<100.)evt_wt*=0.988761;
+    else if(ZPt<150.)evt_wt*=0.982497;
+    else if(ZPt<200.)evt_wt*= 0.971749;
+    else if(ZPt<1000.)evt_wt*=0.914429;
+  }
+  else if (year == "2017" || year == "2018" ){
+    //std::cout<<"Year: "<<year<<"  ZPt: "<<ZPt<<" evt_wt: "<<evt_wt<<std::endl;
+    if     (ZPt<10.)evt_wt*=0.910385;
+    else if(ZPt<20.)evt_wt*=1.13543;
+    else if(ZPt<30.)evt_wt*=1.10441;
+    else if(ZPt<40.)evt_wt*=1.01315;
+    else if(ZPt<50.)evt_wt*=0.982598;
+    else if(ZPt<60.)evt_wt*=0.980697;
+    else if(ZPt<70.)evt_wt*= 0.972673;
+    else if(ZPt<80.)evt_wt*=0.972325;
+    else if(ZPt<100.)evt_wt*=0.966127;
+    else if(ZPt<150.)evt_wt*=0.953262;
+    else if(ZPt<200.)evt_wt*= 0.933403;
+    else if(ZPt<1000.)evt_wt*=0.904518;
+  }
+  else evt_wt*=1.0;
+}
+  //std::cout<<"Year: "<<year<<"  ZPt: "<<ZPt<<" Final evt__wt: "<<evt_wt<<std::endl;
+  return evt_wt;
+}
+
+
 void taggerMicro(Double_t c_ip, Double_t c_ta, TString year, TString sample){
 
   Double_t c_al;
@@ -58,10 +98,10 @@ void taggerMicro(Double_t c_ip, Double_t c_ta, TString year, TString sample){
   h_ntags->Sumw2();
 
   TString Path;
-  if     (year=="2016") {lumiSF=(16226.2/20000.); Path = "root://cmsxrootd.fnal.gov///store/group/lpchbb/LLDJntuples/2016_LLDJ_V2p0/analyzed/2016JECV2p0_PreApp_JetPt35_OPT/";  }
-  else if(year=="2017") {lumiSF=(41500. /20000.); Path = "root://cmsxrootd.fnal.gov///store/group/lpchbb/LLDJntuples/2017_LLDJ_V3p0/analyzed/2017JEC_PreApp_JetPt35_OPT/";  }
-  else if(year=="2018") {lumiSF=(59700. /20000.); Path = "root://cmsxrootd.fnal.gov///store/group/lpchbb/LLDJntuples/2018_LLDJ_V3p0/analyzed/2018JECV3p0_PreApp_JetPt35_OPT/";  }
-  else if(year=="local"){ lumiSF=(20000. /20000.); Path = "./";}
+  if     (year=="2016") {lumiSF=(16165.4/20000.); Path = "root://cmsxrootd.fnal.gov///store/group/lpchbb/LLDJntuples/2016_LLDJ_V2p0/analyzed/2016JECV2p0_PreApp_JetPt35_MuTkTrigs/";  }
+  else if(year=="2017") {lumiSF=(41544.3/20000.); Path = "root://cmsxrootd.fnal.gov///store/group/lpchbb/LLDJntuples/2017_LLDJ_V3p0/analyzed/2017JECV3p0_PreApp_JetPt35_OPT_kim/";  }
+  else if(year=="2018") {lumiSF=(59697.1/20000.); Path = "root://cmsxrootd.fnal.gov///store/group/lpchbb/LLDJntuples/2018_LLDJ_V3p0/analyzed/2018JECV3p0_PreApp_JetPt35_OPT/";  }
+  else if(year=="local"){ lumiSF=(/*20000.*/ 41500./20000.); Path = "./";}
   else std::cout <<"Bad Year"<<std::endl;
   std::cout <<"samples: "<<sample <<"   MCSF: "<< MCSF << " lumiSF: "  << lumiSF << std::endl;
 
@@ -119,12 +159,14 @@ void taggerMicro(Double_t c_ip, Double_t c_ta, TString year, TString sample){
         for(int i = 0; i<Event->size(); i++){
           int tags = 0;
 	  int ntag_low_zpt = 0;
+          float ZSF = ZPtSF(ZPt->at(i), year, sample);
+
           for (int j=0; j<TA->size(); j++)
 	    {
 	      if(Alpha->at(j)<=c_al && IP->at(j)>=c_ip && TA->at(j)>=c_ta && Alpha->at(j)>=0.0 && ZPt->at(i)>=c_Zpt ) tags = tags + 1;
 	      if(Alpha->at(j)<=c_al && IP->at(j)>=c_ip && TA->at(j)>=c_ta && Alpha->at(j)>=0.0 && ZPt->at(i) < c_Zpt ) ntag_low_zpt = ntag_low_zpt+1;
 	    }
-	  double full_weight     = lumiSF*W_DEG->at(i)*W_DMu->at(i);//full-weight;
+	  double full_weight     = ZSF*lumiSF*W_DEG->at(i)*W_DMu->at(i);//full-weight;
 
           if(tags<Nbins && ZPt->at(i)>=c_Zpt)//avoid o-tag bing to always count regardless of Z-pt
 	    {
