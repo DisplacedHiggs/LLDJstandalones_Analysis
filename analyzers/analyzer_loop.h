@@ -20,19 +20,9 @@ public :
  virtual       ~analyzer_loop();
  virtual void  Loop(TString outfilename, 
                     Float_t lumi, Float_t nrEvents,
-                    Float_t crossSec, Float_t avgTTSF, Int_t nevts, 
-                    TFile *optfile, TFile *NM1file, TString uncbin);
+                    Float_t crossSec, Int_t nevts, 
+                    TFile *optfile, TString uncbin);
  static const int  width = 8;
- // debug options, printouts
- virtual void debug_printobjects();
- virtual void debug_printdilep();
- virtual void debug_printmuons();
- virtual void debug_printelectrons();
- virtual void debug_printphotons();
- virtual void debug_printjets();
- virtual void debug_printtriggers();
- virtual void debug_printbitset();
- virtual void debug_printbitkeys();
 };
 
 #endif

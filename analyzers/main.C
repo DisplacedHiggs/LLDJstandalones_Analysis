@@ -12,29 +12,6 @@
 #include <vector>
 #include <map>
 
-
-void getInfo(TString Tinputline, Float_t crosssection, Float_t nrevents, Float_t avgTTSF ){
-  // read crosssection
-  if( Tinputline.Contains("crosssection: ") ){  
-   Tinputline.ReplaceAll("crosssection: ","");
-   crosssection = Tinputline.Atof();
-   std::cout << "  crosssection: " << crosssection << std::endl;
-  }
-  // read nr events
-  if( Tinputline.Contains("nrevents: ") ){  
-   Tinputline.ReplaceAll("nrevents: ","");
-   nrevents = Tinputline.Atof();
-   std::cout << "  nrevents: " << nrevents << std::endl;
-  }
-  // read tt avg SF
-  if( Tinputline.Contains("ttsf: ") ){  
-   Tinputline.ReplaceAll("ttsf: ","");
-   avgTTSF = Tinputline.Atof();
-   std::cout << "  avgTTSF: " << avgTTSF << std::endl;
-  }
-}
-
-
 int main(int argc, char **argv){
 
  // start stopwatch
@@ -52,6 +29,7 @@ int main(int argc, char **argv){
  // n - nfiles
  // a - start At file 
  // d - dolocal
+ // y - year
  char *sample = NULL;
  char *slumi = (char*)"12900";
  char *sxname = (char*)"";
@@ -62,19 +40,23 @@ int main(int argc, char **argv){
  char *atfile = (char*)"0";
  bool dolocal = false;
  bool bisMC = false;
+ char *syear = (char*)"???";
  
  int index;
  int s;
 
  opterr = 0;
 
- while ((s = getopt (argc, argv, "s:l:x:e:i:o:a:n:dm")) != -1)
+ while ((s = getopt (argc, argv, "s:l:x:e:i:o:a:n:y:dm")) != -1)
   switch (s)
    {
    case 'm':
     bisMC = true;
    case 'd':
     dolocal = true;
+    break;
+   case 'y':
+    syear = optarg;
     break;
    case 'a':
     atfile = optarg;
@@ -132,13 +114,15 @@ int main(int argc, char **argv){
  TString TSnfiles = TString(nfiles);
  Int_t   TIatfile = TSatfile.Atoi();
  Int_t   TInfiles = TSnfiles.Atoi();
+ TString Tyear    = TString(syear);
  // MC vs Data
  Bool_t isMC=bisMC;
 
- std::cout << "Tsample: " << Tsample << std::endl;
- std::cout << "Txname: " << Txname << std::endl;
- std::cout << "TSlumi: " << TSlumi << std::endl;
- std::cout << "TSevts: " << TSevts << std::endl;
+ std::cout << "Tyear: "    << Tyear    << std::endl;
+ std::cout << "Tsample: "  << Tsample  << std::endl;
+ std::cout << "Txname: "   << Txname   << std::endl;
+ std::cout << "TSlumi: "   << TSlumi   << std::endl;
+ std::cout << "TSevts: "   << TSevts   << std::endl;
  std::cout << "TIatfile: " << TIatfile << std::endl;
  std::cout << "TInfiles: " << TInfiles << std::endl;
 
@@ -192,6 +176,7 @@ int main(int argc, char **argv){
    theChain->Add( "root://cmsxrootd.fnal.gov/"+Tinputline );
    std::cout << " Inputfile: " << Tinputline << std::endl;
   }
+
   inputline_dump.push_back(inputline);
  } // while( std::getline(inputfile, inputline) )
  inputfile.close();
@@ -199,9 +184,9 @@ int main(int argc, char **argv){
  // sample-dependent input variables 
  Float_t nrevents     ;
  Float_t crosssection ;
- Float_t avgTTSF = 1.    ;
 
  // ---- Get sample information 
+ // open <samplename>.info
  inputfile.open(inputInfoName);
  if( !inputfile.good() ) {
    std::cerr << "Cannot open the file: \"" << inputInfoName+"\""<<std::endl;
@@ -214,8 +199,20 @@ int main(int argc, char **argv){
 
   Tinputline = inputline;
 
-  getInfo(Tinputline, crosssection, nrevents, avgTTSF);
-  
+  // read crosssection
+  if( Tinputline.Contains("crosssection: ") ){  
+   Tinputline.ReplaceAll("crosssection: ","");
+   crosssection = Tinputline.Atof();
+   std::cout << "  crosssection: " << crosssection << std::endl;
+  }
+
+  // read nr events
+  if( Tinputline.Contains("nrevents: ") ){  
+   Tinputline.ReplaceAll("nrevents: ","");
+   nrevents = Tinputline.Atof();
+   std::cout << "  nrevents: " << nrevents << std::endl;
+  }
+
   inputline_dump.push_back(inputline);
  } //while !inputfile.eof()
 
@@ -223,37 +220,38 @@ int main(int argc, char **argv){
 
  std::vector<TString> unccategories;
  unccategories.push_back("");
- //if( isMC ){
- //  unccategories.push_back("_EGSUp");
- //  unccategories.push_back("_EGSDown");
- //  unccategories.push_back("_MESUp");
- //  unccategories.push_back("_MESDown");
- //  //unccategories.push_back("_JESUp");
- //  //unccategories.push_back("_JESDown");
- //  unccategories.push_back("_AMaxUp");
- //  unccategories.push_back("_AMaxDown");
- //  unccategories.push_back("_IPSigUp");
- //  unccategories.push_back("_IPSigDown");
- //  unccategories.push_back("_TAUp");
- //  unccategories.push_back("_TADown");
- //  unccategories.push_back("_TagVarsUp");
- //  unccategories.push_back("_TagVarsDown");
- // }
+ if( isMC ){
+//   unccategories.push_back("_EGSUp");
+//   unccategories.push_back("_EGSDown");
+//   unccategories.push_back("_MESUp");
+//   unccategories.push_back("_MESDown");
+//  //   unccategories.push_back("_JESUp");
+//  //   unccategories.push_back("_JESDown");
+//   unccategories.push_back("_AMaxUp");
+//   unccategories.push_back("_AMaxDown");
+//   unccategories.push_back("_IPSigUp");
+//   unccategories.push_back("_IPSigDown");
+//   unccategories.push_back("_TAUp");
+//   unccategories.push_back("_TADown");
+//   unccategories.push_back("_TagVarsUp");
+//   unccategories.push_back("_TagVarsDown");
+//   unccategories.push_back("_ESFUp");
+//   unccategories.push_back("_ESFDown");
+//   unccategories.push_back("_MSFUp");
+//   unccategories.push_back("_MSFDown");
+  }
  
  // make the analyzer, init some stuff
  analyzer_loop analyzer;
- analyzer.Init(theChain, isMC, makelog, Tsample);
- analyzer.setConfiguration();
+ analyzer.setConfiguration(Tyear);
 
  // file to be filled with slimmed tree
  // must be created before TTree, put here to get name aligned
  TFile* optfile = new TFile(outfilename+"_OPTtree.root", "RECREATE");
- TFile* NM1file = new TFile(outfilename+"_NM1tree.root", "RECREATE");
 
- TString outfilenamebase = outfilename;
  for(unsigned int i=0; i<unccategories.size(); ++i){
   TString unccategory = unccategories.at(i);
-  //outfilename = outfilenamebase + unccategory;
+ analyzer.Init(theChain, isMC, makelog, Tsample, unccategory);
 
   analyzer.initSelectionCategories( );
   if(i==0){
@@ -264,7 +262,6 @@ int main(int argc, char **argv){
   analyzer.initEleHistograms( unccategory );
   analyzer.initMuHistograms( unccategory );
   analyzer.initLepHistograms( unccategory );
-  analyzer.initPhoHistograms( unccategory );
   analyzer.initMETHTHistograms( unccategory );
   analyzer.initWeightHistograms( unccategory );
   //analyzer.initExtraHistograms( unccategory );
@@ -276,13 +273,7 @@ int main(int argc, char **argv){
   analyzer.initAODCaloJetMultHistograms( unccategory );
   analyzer.initCutflowHistograms( unccategory );
   analyzer.init2DHistograms( unccategory );
-  //if(unccategory=="") analyzer.initBackgroundEstimateHistograms(); //if we end up using this, need to think about unccategory
-  if(analyzer.doTTOC())analyzer.initTTOCHistograms( unccategory );
-
-  //std::cout << "NAME ELE " << analyzer.h_AOD_nEle[0]->GetName() << std::endl;//doesn't work
-
-
-  analyzer.Loop(outfilename, lumi, nrevents, crosssection, avgTTSF, TIevts, optfile, NM1file, unccategory);
+  analyzer.Loop(outfilename, lumi, nrevents, crosssection, TIevts, optfile, unccategory);
  }
 
  //Close histogram output files

@@ -36,7 +36,6 @@ void analyzer_globalvalues::clearglobalcounters()
  n_passOneMuNoPair  = 0;
  n_passEleMuOSOF    = 0;
  n_passEleMuOSOFL   = 0;
- n_passOnePho       = 0;
  n_totalCalo        = 0;
 
 }
@@ -46,7 +45,6 @@ void analyzer_globalvalues::clearglobalcounters()
 void analyzer_globalvalues::cleareventcounters(){
 
  // clear counters for event variables
- nSelectedPho=0;
  nSelectedEle=0;
  nSelectedMuo=0;
  nSelectedAODCaloJet=0;
@@ -55,7 +53,6 @@ void analyzer_globalvalues::cleareventcounters(){
 // nBPartonFlavour=0;
 
  electron_list         .clear(); 
- photon_list           .clear(); 
  muon_list             .clear(); 
  aodcalojet_list       .clear(); 
  aodcalojet_L1PF_list  .clear(); 

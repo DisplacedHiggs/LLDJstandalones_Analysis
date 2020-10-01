@@ -1,8 +1,6 @@
 
 doSubmit=true
 
-#c_ip=(0.9 1.0 1.15 1.25)
-#c_ta=(-1.9 -1.75 -1.5)
 c_ip=(0.5 0.75 0.9 1.0 1.15 1.25 1.5 1.75 2.0 2.5 2.75)
 c_ta=(-3.0 -2.5 -2.25 -2.10 -2.0 -1.9 -1.75 -1.5 -1.25 -1.0 -0.75)
 
@@ -31,12 +29,7 @@ samples_16=( \
  "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_OPTtree.root"   \
  "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-10_OPTtree.root"   \
  "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-1_OPTtree.root"   \
- "DYJetsToLL_M-10to50_OPTtree.root"   \
  "DYJetsToLL_M-50_OPTtree.root"   \
-# "DYJetsToLL_M-5to50_HT-100to200_OPTtree.root"   \
-# "DYJetsToLL_M-5to50_HT-200to400_OPTtree.root"   \
-# "DYJetsToLL_M-5to50_HT-400to600_OPTtree.root"   \
-# "DYJetsToLL_M-5to50_HT-600toInf_OPTtree.root"   \
  "QCD_HT1000to1500_OPTtree.root"   \
  "QCD_HT100to200_OPTtree.root"   \
  "QCD_HT1500to2000_OPTtree.root"   \
@@ -56,25 +49,49 @@ samples_16=( \
  "TTtoLfromTbar_OPTtree.root"   \
  "WGToLNuG_OPTtree.root"   \
  "WJetsToLNu_OPTtree.root"   \
- "WWTo2L2Nu_OPTtree.root"   \
- "WWToLNuQQ_OPTtree.root"   \
  "WW_OPTtree.root"   \
- "WZTo1L3Nu_OPTtree.root"   \
- "WZTo3LNu_OPTtree.root"   \
- "WZToLNu2QorQQ2L_OPTtree.root"   \
  "WZ_OPTtree.root"   \
  "ZGTo2LG_OPTtree.root"   \
  "ZH_HToBB_ZToLL_OPTtree.root"   \
- "ZZTo2L2Nu_OPTtree.root"   \
- "ZZTo2L2Q_OPTtree.root"   \
- "ZZTo2Q2Nu_OPTtree.root"   \
- "ZZTo4L_OPTtree.root"   \
  "ZZ_OPTtree.root"   \
  "ggZH_HToBB_ZToLL_OPTtree.root"   \
- "mad_DYJetsToLL_M-50_OPTtree.root"  \
+ #"mad_DYJetsToLL_M-50_OPTtree.root"  \
+# "ZZTo2L2Nu_OPTtree.root"   \
+# "ZZTo2L2Q_OPTtree.root"   \
+# "ZZTo2Q2Nu_OPTtree.root"   \
+# "ZZTo4L_OPTtree.root"   \
+# "WZTo1L3Nu_OPTtree.root"   \
+# "WZTo3LNu_OPTtree.root"   \
+# "WZToLNu2QorQQ2L_OPTtree.root"   \
+# "WWTo2L2Nu_OPTtree.root"   \
+# "WWToLNuQQ_OPTtree.root"   \
 ) 
 
 samples_17=( \ 
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1000_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-100_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-10_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-1000_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-100_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-10_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-1_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-1000_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-10_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-1_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1000_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-100_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-10_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-1000_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-100_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-10_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-1_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-1000_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-10_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-1_OPTtree.root"   \
  "DYJetsToLL_M-50_OPTtree.root"   \
  "QCD_HT100to200_OPTtree.root"   \
  "QCD_HT1500to2000_OPTtree.root"   \
@@ -101,6 +118,30 @@ samples_17=( \
 ) 
 
 samples_18=( \ 
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1000_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-100_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-10_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-1000_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-100_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-10_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-1_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-1000_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-10_OPTtree.root"   \
+ "ZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-1_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1000_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-100_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-10_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-15_ctauS-1_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-1000_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-100_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-10_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-40_ctauS-1_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-1000_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-10_OPTtree.root"   \
+ "ggZH_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-1_OPTtree.root"   \
  "DYJetsToLL_M-50_OPTtree.root"   \
  "QCD_HT1000to1500_OPTtree.root"   \
  "QCD_HT100to200_OPTtree.root"   \
@@ -117,7 +158,6 @@ samples_18=( \
  "ST_tW_top_5f_NoFullyHadronicDecays_OPTtree.root"   \
  "TTJets_OPTtree.root"   \
  "TTtoLL_OPTtree.root"   \
- "TTtoLL_mad_OPTtree.root"   \
  "WGToLNuG_OPTtree.root"   \
  "WJetsToLNu_OPTtree.root"   \
  "WW_OPTtree.root"   \
@@ -126,15 +166,19 @@ samples_18=( \
  "ZH_HToBB_ZToLL_OPTtree.root"   \
  "ZZ_OPTtree.root"   \
  "ggZH_HToBB_ZToLL_OPTtree.root"   \
- "mad_DYJetsToLL_M-50_OPTtree.root"   \
- "mad_TTJets_OPTtree.root"   \
+ #"mad_DYJetsToLL_M-50_OPTtree.root"   \
+ #"TTtoLL_mad_OPTtree.root"   \
+ #"mad_TTJets_OPTtree.root"   \
 ) 
 #make directories
+#rm -rf err
+#rm -rf out
+#rm -rf log
 mkdir -p err
 mkdir -p out
 mkdir -p log
 
-for y in {0..0} #Loop through years
+for y in {2..2} #Loop through years
 do
   #echo Year $y
   if [ $y == 0 ]
@@ -156,8 +200,9 @@ do
      printf "Universe = vanilla\n" > submitfile
      printf "Executable = run_job.sh\n" >> submitfile
      printf "Should_Transfer_Files = YES \n" >> submitfile
+     #printf "Transfer_Output_Files = *.txt\n" >> submitfile
      printf "WhenToTransferOutput = ON_EXIT\n" >> submitfile
-     printf "Transfer_Input_Files = taggerSlim.C, cms_setup.tar.gz\n" >> submitfile
+     printf "Transfer_Input_Files = taggerMicro.C, cms_setup.tar.gz\n" >> submitfile
      printf "notify_user = $(whoami)@cern.ch\n" >> submitfile
      printf "x509userproxy = \$ENV(X509_USER_PROXY)\n" >> submitfile
      printf "\n" >> submitfile

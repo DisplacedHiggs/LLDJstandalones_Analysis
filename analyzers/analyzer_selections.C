@@ -39,7 +39,6 @@ void analyzer_selections::clearSelections()
  selvecOneMuNoPair .clear() ;   
  selvecEleMuOSOF   .clear() ;   
  selvecEleMuOSOFL  .clear() ;   
- selvecOnePho      .clear() ;
 
  bitsPassOneEleSig   = 0;
  bitsPassTwoEleSig   = 0;
@@ -61,7 +60,6 @@ void analyzer_selections::clearSelections()
  bitsPassOneMuNoPair = 0;
  bitsPassEleMuOSOF   = 0;
  bitsPassEleMuOSOFL  = 0;
- bitsPassOnePho      = 0;
 
  keyPassOneEleSig   = 0;
  keyPassTwoEleSig   = 0;
@@ -83,14 +81,12 @@ void analyzer_selections::clearSelections()
  keyPassOneMuNoPair = 0;
  keyPassEleMuOSOF   = 0;
  keyPassEleMuOSOFL  = 0;
- keyPassOnePho      = 0;
 
 
 }
 
 void analyzer_selections::setSelections()
 {
-
  // base selections (no trigger)
  selvecBaseSig  .push_back( passGoodVtx );
  selvecBaseSig  .push_back( passZWindow );
@@ -108,15 +104,10 @@ void analyzer_selections::setSelections()
  selvecBaseDY      .push_back( passPTOSSFL );
  selvecBaseDY      .push_back( passOneJet  );
  
-// selvecBaseOffZ    .push_back( true );//.push_back( passGoodVtx  );
-// selvecBaseOffZ    .push_back( true );//.push_back( !passZWindow );
-// selvecBaseOffZ    .push_back( true );//.push_back( passOSSF     );
-// selvecBaseOffZ    .push_back( true );//.push_back( passOneJet   );
-
  selvecBaseOffZ    .push_back( passGoodVtx );//.push_back( passGoodVtx  );
- selvecBaseOffZ    .push_back( passZWindow );//.push_back( !passZWindow );
- selvecBaseOffZ    .push_back( passPTOSSFL_2);//.push_back( passOSSF     );
- selvecBaseOffZ    .push_back( passOneJet  );//.push_back( passOneJet   );
+ selvecBaseOffZ    .push_back( passZWindow );//passZWindow );//.push_back( !passZWindow );
+ selvecBaseOffZ    .push_back( true );//.push_back( passOSSF     );
+ selvecBaseOffZ    .push_back( passOneJet );//.push_back( passOneJet   );
 
  selvecBaseNoPair  .push_back( passGoodVtx  );
  selvecBaseNoPair  .push_back( !passZWindow );
@@ -190,10 +181,6 @@ void analyzer_selections::setSelections()
  selvecEleMuOSOFL .push_back( passGoodVtx  );
  selvecEleMuOSOFL .push_back( passOneJet   );
  if(!TTOC) selvecEleMuOSOFL .push_back( (!passPTOSOF)  && passZWinOSOF );
- // One Photon
- selvecOnePho .push_back( passSinglePho);
- selvecOnePho .push_back( passGoodVtx  );
- selvecOnePho .push_back( passOneJet && muon_list.size()==0 && electron_list.size()==0 );
 }
 
 Int_t analyzer_selections::setSelKey( std::vector<Bool_t> selvec ) 
@@ -231,6 +218,11 @@ Int_t analyzer_selections::setSelBits( std::vector<Bool_t> selvec, int &counter)
 }
 
 // trigger ------------------------
+
+
+
+
+//---2018
 Bool_t analyzer_selections::askPassSingleEle()
 {
  Bool_t doespass = kFALSE;
@@ -246,10 +238,12 @@ Bool_t analyzer_selections::askPassDoubleEle()
 {
  Bool_t doespass = kFALSE;
  if(electron_list.size()>1){ 
-  //if(isMC) doespass = kTRUE;
-  //else doespass = (Bool_t)((AOD_HLT_Ele23Ele12 > 0) );
   if(TTOC) doespass = kTRUE;
-  else doespass = (Bool_t)( (AOD_HLT_Ele23Ele12_noDZ > 0) ); 
+  else {
+    if      (analysisYear=="2018") doespass = (Bool_t)( (AOD_HLT_Ele23Ele12_noDZ > 0) ); 
+    else if (analysisYear=="2017") doespass = (Bool_t)( (AOD_HLT_Ele23Ele12_noDZ > 0) ); 
+    else                           doespass = (Bool_t)( (AOD_HLT_Ele23Ele12 > 0)    ); 
+  }
  } 
  return doespass;
 }
@@ -269,26 +263,16 @@ Bool_t analyzer_selections::askPassDoubleMu()
 {
  Bool_t doespass = kFALSE;
  if(muon_list.size()>1){ 
-  //if(isMC) doespass = kTRUE;
-  //else doespass = (Bool_t)( (AOD_HLT_Mu17Mu8 > 0) || (AOD_HLT_Mu17TkMu8 > 0) || (AOD_HLT_Mu17Mu8_noDZ > 0) || (AOD_HLT_Mu17TkMu8_noDZ > 0)) ; 
   if(TTOC) doespass = kTRUE;
-  else doespass     = (Bool_t)( (AOD_HLT_Mu17Mu8_Mass3p8 > 0) ) ; 
+  else{ 
+    if     (analysisYear=="2018") doespass     = (Bool_t)( (AOD_HLT_Mu17Mu8_Mass3p8 > 0) ) ; 
+    else if(analysisYear=="2017") doespass     = (Bool_t)( (AOD_HLT_Mu17Mu8_Mass3p8 > 0) || (AOD_HLT_Mu17Mu8_Mass8 > 0) ) ; 
+    else                          doespass     = (Bool_t)( (AOD_HLT_Mu17Mu8 > 0) || (AOD_HLT_Mu17TkMu8 > 0) || (AOD_HLT_Mu17Mu8_noDZ > 0) || (AOD_HLT_Mu17TkMu8_noDZ > 0)) ; 
+  }  
  } 
  return doespass;
 }
 
-Bool_t analyzer_selections::askPassSinglePho()
-{
- Bool_t doespass = kFALSE;
-// if(photon_list.size()>0){ 
-//  //doespass = kTRUE;
-//  //if(isMC) doespass = kTRUE;
-//  //else doespass = (Bool_t)( (AOD_HLT_Photon165_HE10) );
-//  if(TTOC) doespass = kTRUE;
-//  else     doespass = (Bool_t)(AOD_HLT_Photon165_HE10 > 0);
-// } 
- return doespass;
-}
 
 Bool_t analyzer_selections::askPassMuEG()
 {
@@ -298,7 +282,16 @@ Bool_t analyzer_selections::askPassMuEG()
    doespass = kTRUE;
   } // if(TTOC)
   else{
-    doespass =  (Bool_t)( (AOD_HLT_Mu12Ele23_DZ > 0) || (AOD_HLT_Mu23Ele12_noDZ > 0) );
+    if     (analysisYear=="2018") doespass =  (Bool_t)( (AOD_HLT_Mu12Ele23_DZ > 0) || (AOD_HLT_Mu23Ele12_noDZ > 0) );
+    else if(analysisYear=="2017") doespass =  (Bool_t)( (AOD_HLT_Mu12Ele23_DZ > 0) || (AOD_HLT_Mu23Ele12_noDZ > 0) );
+    else{
+      if(run>=273158 && run<=278272){
+       doespass =  (Bool_t)( (AOD_HLT_Mu8Ele23_noDZ > 0) || (AOD_HLT_Mu23Ele12_noDZ > 0) );
+      }   
+      else if(run>=278273 && run<=284044){
+       doespass = (Bool_t)( (AOD_HLT_Mu12Ele23_DZ > 0) || (AOD_HLT_Mu23Ele12_DZ > 0) );
+      }
+    }
   } // if(!TTOC)
  } // if(muon_list.size()>0 && electron_list.size()>0)
  return doespass;

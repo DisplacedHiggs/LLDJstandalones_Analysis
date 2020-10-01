@@ -1,0 +1,10 @@
+./OPT.exe --inputList=data/inputs_for_displacedjet/list_of_lists_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_.txt --TF_Unc=0.3
+./OPT.exe --inputList=data/inputs_for_displacedjet/list_of_lists_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_.txt --TF_Unc=0.4
+./OPT.exe --inputList=data/inputs_for_displacedjet/list_of_lists_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_.txt --TF_Unc=0.5
+./OPT.exe --inputList=data/inputs_for_displacedjet/list_of_lists_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_.txt --TF_Unc=0.6
+./OPT.exe --inputList=data/inputs_for_displacedjet/list_of_lists_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_.txt --TF_Unc=0.7
+./OPT.exe --inputList=data/inputs_for_displacedjet/list_of_lists_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_.txt --TF_Unc=0.8
+./OPT.exe --inputList=data/inputs_for_displacedjet/list_of_lists_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_.txt --TF_Unc=0.9
+./OPT.exe --inputList=data/inputs_for_displacedjet/list_of_lists_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_.txt --TF_Unc=1.0
+./OPT.exe --inputList=data/inputs_for_displacedjet/list_of_lists_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_.txt --TF_Unc=1.5
+./OPT.exe --inputList=data/inputs_for_displacedjet/list_of_lists_HToSSTobbbb_ZToLL_MH-125_MS-55_ctauS-100_.txt --TF_Unc=-1
