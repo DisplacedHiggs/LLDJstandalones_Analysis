@@ -178,7 +178,7 @@ mkdir -p err
 mkdir -p out
 mkdir -p log
 
-for y in {2..2} #Loop through years
+for y in {0..2} #Loop through years
 do
   #echo Year $y
   if [ $y == 0 ]
